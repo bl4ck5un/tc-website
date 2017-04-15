@@ -23,11 +23,6 @@
         {% else %}
         <img class="ui centered mini image" src="{{ SITEURL }}/theme/images/logo.png">
         {% endif %}
-        <div class="ui horizontal inverted small divided link list">
-            {% for item, url in LINKS %}
-            <a href="{{ url }}" class="item">{{ item }}</a>
-            {% endfor %}
-        </div>
     </div>
 </div>
 {% endblock %}
