@@ -16,7 +16,7 @@ deploy:
   region: us-east-1
   skip_cleanup: true
   default_text_charset: utf-8
-  cache_control: max-age=604800
+  cache_control: max-age=0
   local-dir: output
   upload-dir: staging
   detect_encoding: true
