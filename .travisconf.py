@@ -36,4 +36,6 @@ LOGOPATH = '/theme/images/logo-tc.png'
 LINKS = [
     ('Ethereum Project', 'https://www.ethereum.org/'),
     ]
+
 GOOGLE_ANALYTICS='UA-72748416-5'
+DISQUS_SITENAME = 'town-crier'
