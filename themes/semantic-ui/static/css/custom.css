@@ -92,3 +92,25 @@ body {
 .archive a {
 	padding-left: 15px;
 }
+
+code, pre {
+  font-family: Courier, monospace;
+  font-style: normal;
+}
+
+
+:not(pre) > code {
+  padding: 2px 4px;
+  background: #f7f7f7;
+  font-size: 80%;
+}
+
+
+pre {
+  font-size: 85%;
+  overflow-y: hidden;
+  overflow-x: auto;
+  padding: .3rem .5rem;
+  margin: 1rem 0;
+  background: #f7f7f7;
+}
