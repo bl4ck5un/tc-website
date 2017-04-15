@@ -98,8 +98,8 @@ code, pre {
   font-style: normal;
 }
 
-
-:not(pre) > code {
+/*inline code*/
+code {
   padding: 2px 4px;
   background: #f7f7f7;
   font-size: 80%;
