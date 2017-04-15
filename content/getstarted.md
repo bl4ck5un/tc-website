@@ -7,7 +7,7 @@ Category: Tutorial
 
 For smart contracts on blockchain systems, it's currently difficult to get real-world data because authentication for the data fed back to the blockchain is a crucial issue.
 A currency exchange contract requires exchange ratio.
-An trip insurance contract requires the whether information.
+A trip insurance contract requires the whether information.
 A trade contract requires delivery result.
 There are a lot of examples of applications that cannot run without real-world data feed.
 The question is who should be trusted to feed such data into smart contracts.
@@ -68,47 +68,80 @@ It consists of the following three functions.
 
 For more details, you can look into the source code of the contract [TownCrier.sol].
 
-## Application Contract upon Town Crier by Example
+## Application Contract upon Town Crier
 
-For an application contract upon Town Crier, here are the five basic functions:
+### A general application contract for requesting and responding
+
+For an application contract upon Town Crier, here are the five basic components:
 
 * ```function() public payable;```
 
-    The fallback function must be payable such that TownCrier contract could refund to this contract when certain condition meets.
+    The fallback function must be payable such that ```TownCrier``` contract could refund to this contract when certain condition meets. 
+    The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when ```TownCrier``` contract refund ether to it.
     
 * ```function Application(TownCrier tc) public;```
     
-    The Application contract needs to store the address of TownCrier contract during creation such that it could call ```request()``` and ```cancel()``` of TownCrier contract.
-
-* ```function request(uint8 requestType, bytes32[] requestData) public payable;```
+    The Application contract needs to store the address of ```TownCrier``` contract during creation such that it could call ```request()``` and ```cancel()``` of TownCrier contract.
     
-    To send a request to the ```TownCrier``` contract, you need to call ```TownCrier.request()```
+    The address of ```TownCrier``` contract is <! TC address >
+    
+* ```TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);```
+    
+    This line is to call ```request()``` of ```TownCrier``` contract.
+    If this is in the same contract as the callback function, then ```TC_CALLBACK_ADD``` could just be replaced by ```this```.
+    ```TC_CALLBACK_FID``` should be hardcoded as the first 4 bytes of hash of the callback function specification.
+    
+    Developers need to be careful with the fee sent with the function call.
+    In ```TownCrier``` contract, the gas limit for calling the callback function of the application contract is bounded by the fee a requester paid originally when sending the request.
+    In addition, Town Crier server sets the gas limit as 3e6 when sending a transaction to ```deliver()``` function of ```TownCrier``` contract.
+    If a requester paid too much for gas cost than the transaction allows, the excess ether cannot be used for operations of the callback function but will go directly to the SGX wallet, just like tips for Town Crier service.
 
 * ```function response(uint64 requestId, uint64 error, bytes32 respData) public;```
 
+	This is the function which will be called by ```TownCrier``` contract to deliver the response from Town Crier server.
+    The specification for it should be ```bytes4(sha3("response(uint64,uint64,bytes32)"))```.
+    
+    Since the gas limit for sending a response back to ```TownCrier``` contract is set as 3e6 by Town Crier server, as mentioned above, the callback function should not be so complicated that might cost more gas than permitted.
+    The application contract deployer has better set a lowerbound for request fee such that the callback function won't run out of gas when get called by ```TownCrier``` contract.
 
+* ```TownCrier.cancel(requestId);```
 
-* ```function cancel(uint64 requestId) public;```
+	This line is for cancellation, calling the ```cancel()``` function of ```TownCrier``` contract.
+    A developer need to carefully set up the cancelled flag for the request before refund the requester in order to prevent reentrant attacks.
 
+You can look at [Application.sol] for the complete example application smart contract.
 
- 
-The following is the complete contract for general request.
+### A practical contract for flight insurance
+
+Suppose Alice wanted to provide a flight insurance service by deploying a smart contract such that clients would get paid when their flights insured are delayed or cancelled.
 ```
-```
-You can use the following scripts to deploy this contract. The parameter fed in is the address of TownCrier contract. ```App``` is the compiled Application contract.
-
-
-
-
-## Tips for Designing Application Contracts
-### Flight Insurance
-Suppose Alice wanted to provide a flight insurance service by deploying a smart contract such that clients would get paid when their flights insured are delayed or cancelled (or maybe even when they got beaten by UA).
-```
 
 ```
+
+## Request types Town Crier currently support and formats
+
+| Type ID | Data and source | RequestData | Response |
+| ------- | --------------- | ----------- | -------- |
+| 1 | [Flight departure delay] |
+| 2 | [Steam exchange] |
+| 3 | [Stock ticker] |
+| 4 | [UPS tracking] |
+| 5 | [Coin market price] |
+| 6 | [Weather] |
+
+## Features of Town Crier in the future
+
+* SGX attestation
+* Respond with a delay
+
 
 [Town Crier: An Authenticated Data Feed for Smart Contracts]: https://eprint.iacr.org/2016/168.pdf
 [TownCrier.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/TownCrier.sol
-[Application.sol]:
-[FlightInsurance.sol]:
-
+[Application.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/Application.sol
+[FlightInsurance.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/FlightInsurance.sol
+[Flight departure delay]: http://flightaware.com/
+[Steam exchange]: http://store.steampowered.com/
+[Stock ticker]: https://finance.yahoo.com/
+[UPS tracking]: https://www.ups.com/
+[Coin market price]: https://coinmarketcap.com/
+[Weather]: https://darksky.net
