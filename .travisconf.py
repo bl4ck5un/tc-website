@@ -2,17 +2,13 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
-AUTHOR = u'Fan Zhang'
+AUTHOR = u'TC Team'
 SITENAME = u'Town Crier'
 
-# SITEURL = 'http://www.town-crier.org/staging/'
-
+SITEURL = 'http://www.town-crier.org/staging/'
 THEME = './themes/semantic-ui'
-
 PATH = 'content'
-
 TIMEZONE = 'America/New_York'
-
 DEFAULT_LANG = u'en'
 
 # Feed generation is usually not desired when developing
@@ -40,8 +36,4 @@ LOGOPATH = '/theme/images/logo-tc.png'
 LINKS = [
     ('Ethereum Project', 'https://www.ethereum.org/'),
     ]
-
-# Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
-
 GOOGLE_ANALYTICS='UA-72748416-5'
