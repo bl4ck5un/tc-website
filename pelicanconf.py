@@ -33,6 +33,8 @@ MENU_LINKS = [
 ('FAQ', 'faq.html'),
 ]
 
+LOGOPATH = '/theme/images/logo-tc.png'
+
 LINKS = [
     ('Ethereum Project', 'https://www.ethereum.org/'),
     ]
