@@ -1,41 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="ui grid intro">
-    <div class="row">
-        <div class="column center aligned">
-          <h1 class="ui header">Town Crier
-            <div class="sub header">an Authenticated Data Feed for Smart Contracts</div>
-          </h1>
+
+<!--<div class="ui text container center aligned article-top">-->
+    <!--<h1 class="ui header article-huge">Town Crier</h1>-->
+<!--</div>-->
+
+<div class="ui vertical center aligned segment" id="hero">
+    <h1 class="ui header">Town Crier</h1>
+    <div class="sub header">An Authenticated Data Feed for Smart Contracts</div>
+    <div>
+        <a href="get-started.html">
+        <div class="ui inverted animated button" tabindex="0">
+            <div class="visible content">Get Started</div>
+            <div class="hidden content">
+                <i class="right arrow icon"></i>
+            </div>
         </div>
+        </a>
     </div>
 </div>
 <!-- <div class="ui grid main container">
     {% include 'article_list.html' %}
 </div> -->
 
+<div class="ui vertical center aligned segment">
+
+
 <div class="ui text container">
-  <h3 class="ui horizontal divider header">
-    <i class="tag icon"></i>
-    What is Town Crier
-  </h3>
+    <h3 class="ui horizontal divider header">
+        <i class="tag icon"></i>
+        What is Town Crier?
+    </h3>
 
-  <p>Town Crier system is an authenticated data feed for smart contracts.</p>
+    <p>Town Crier system is an authenticated data feed for smart contracts, a.k.a. an "oracle."
+        It was created by students and faculty at <a href="http://www.initc3.org">The Initiative for CryptoCurrencies and Contracts (IC3)</a>. </p>
 
-  <h3 class="ui horizontal divider header">
-    <i class="tag icon"></i>
-    Benefits
-  </h3>
+    <h3 class="ui horizontal divider header">
+        <i class="tag icon"></i>
+        Why using Town Crier?
+    </h3>
 
-  <p>Smart contracts systems today lack trustworthy sources of data, as currently deployed oracles provide only weak provenance and confidentiality guarantees. The Town Crier system leverages trusted hardware (Intel SGX) to provide a strong guarantee that data comes from an existing, trustworthy source. It also provides confidentiality, enabling smart contracts to support confidential queries and manage user credentials.</p>
+    <p>Smart contracts systems today lack trustworthy sources of data, as currently deployed oracles provide only weak provenance and confidentiality assurances. The Town Crier system leverages trusted hardware (Intel SGX) to provide a strong guarantee that data comes from an existing, trustworthy source. It also provides confidentiality, enabling smart contracts to support confidential queries and even manage user credentials.</p>
 
-  <h3 class="ui horizontal divider header">
-    <i class="tag icon"></i>
-    How to use Town Crier?
-  </h3>
+    <h3 class="ui horizontal divider header">
+        <i class="tag icon"></i>
+        How to use Town Crier?
+    </h3>
 
-  <p>It's very easy! Checkout the <a href="get-started.html">Get Started</a> tutorial.</p>
+    <p>It's very easy! Check out the <a href="get-started.html">Get Started</a> tutorial.</p>
 </div>
 
-
+</div>
 {% endblock %}

@@ -6,13 +6,23 @@ body {
 	min-height: 600px;
 }
 
-.intro {
-    background: #32B4AA;
-    margin-top: 30px !important;
-    margin-bottom: 60px !important;
-    border-bottom: 1px solid #eee;
-    padding: 100px !important;
-    color: rgba(255, 255, 255, 0.8);
+#hero {
+    background: #282828 !important;
+    padding: 4rem !important;
+    margin-top: 50px !important;
+    border-radius: 0 !important;
+    margin-bottom: 2rem;
+}
+
+#hero .header, #hero h1 {
+    color: #fabd2f;
+    font-size: 4rem;
+}
+
+#hero .sub.header {
+    font-size: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
 }
 
 .articles {
@@ -20,7 +30,8 @@ body {
 }
 
 .main.menu {
-    margin-top: 4em;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     border-radius: 0;
     border: none;
     box-shadow: none;
@@ -61,8 +72,8 @@ body {
 }
 
 .ui.footer.segment {
-    margin: 5em 0em 0em;
-    padding: 5em 0em;
+    margin: 0;
+    padding: 1rem;
 }
 
 .article-top {

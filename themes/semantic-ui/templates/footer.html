@@ -1,28 +1,14 @@
 {% block footer %}
-<div class="ui inverted vertical footer segment">
-    <div class="ui center aligned container">
-        <div class="ui stackable inverted divided grid">
-            <div class="eight wide column">
-                <h4 class="ui inverted header">Links</h4>
-                <div class="ui inverted link list">
-                    {% for item, url in LINKS %}
-                    <a href="{{ url }}" class="item">{{ item }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="eight wide column">
-                {% block extra_footer_content %}
-                <h4 class="ui inverted header">LICENSE</h4>
-                <p>Town Crier is patent-pending. Please see LICENSE page for more information.</p>
-                {% endblock %}
-            </div>
-        </div>
-        <div class="ui inverted section divider"></div>
+<div class="ui inverted center aligned vertical footer segment">
+        <!--<div class="ui inverted section divider"></div>-->
+
         {% if LOGOPATH %}
-        <img class="ui centered mini image" src="{{ SITEURL }}{{ LOGOPATH }}">
+          <img class="ui centered mini image" src="{{ SITEURL }}{{ LOGOPATH }}">
         {% else %}
-        <img class="ui centered mini image" src="{{ SITEURL }}/theme/images/logo.png">
+          <img class="ui centered mini image" src="{{ SITEURL }}/theme/images/logo.png">
         {% endif %}
-    </div>
+
+    Copyright &copy; 2016<script>new Date().getFullYear()>2016&&document.write("-"+new Date().getFullYear());</script>.
+    Town Crier is patent-pending. Please see LICENSE page for more information.
 </div>
 {% endblock %}

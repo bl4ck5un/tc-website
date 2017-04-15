@@ -20,14 +20,14 @@
     {% endif %}
 </div>
 <div class="ui text container tall stacked segment">
-    <div class="overlay">
-        <div class="ui labeled icon vertical menu">
-            <a class="item sharer" data-sharer="twitter" data-title="{{ article.title}}" data-url="{{ SITEURL}}/{{ article.url }}"><i class="twitter icon"></i> Tweet</a>
-            <a data-sharer="facebook" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="facebook icon"></i> Share</a>
-            <a data-sharer="googleplus" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="google plus icon"></i> Share</a>
-            <a class="item sharer" data-sharer="email" data-to="" data-title="{{ article.title}}" data-subject="Checkout this article!" data-url="{{ SITEURL }}/{{ article.url }}"><i class="mail icon"></i> E-mail</a>
-        </div>
-    </div>
+    <!--<div class="overlay">-->
+        <!--<div class="ui labeled icon vertical menu">-->
+            <!--<a class="item sharer" data-sharer="twitter" data-title="{{ article.title}}" data-url="{{ SITEURL }}/{{ article.url }}"><i class="twitter icon"></i> Tweet</a>-->
+            <!--<a data-sharer="facebook" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="facebook icon"></i> Share</a>-->
+            <!--<a data-sharer="googleplus" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="google plus icon"></i> Share</a>-->
+            <!--<a class="item sharer" data-sharer="email" data-to="" data-title="{{ article.title}}" data-subject="Checkout this article!" data-url="{{ SITEURL }}/{{ article.url }}"><i class="mail icon"></i> E-mail</a>-->
+        <!--</div>-->
+    <!--</div>-->
     {{ article.content }}
 
     {% if DISQUS_SITENAME %}

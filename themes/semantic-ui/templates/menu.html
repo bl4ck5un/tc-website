@@ -1,27 +1,20 @@
-<div class="ui borderless fixed stackable main menu">
+<div class="ui borderless stackable main menu">
     <div class="ui text container">
       {% if SITEURL %}
       <a href="{{ SITEURL }}" class="header item">
-          {% if LOGOPATH %}
-          <img class="logo" src="{{ SITEURL }}{{ LOGOPATH }}">
-          {% else %}
-          <img class="logo" src="{{ SITEURL }}/theme/images/logo.png">
-          {% endif %}
-          {{ SITENAME }}
-      </a>
       {% else %}
       <a href="/" class="header item">
+      {% endif %}
           {% if LOGOPATH %}
           <img class="logo" src="{{ SITEURL }}{{ LOGOPATH }}">
           {% else %}
           <img class="logo" src="{{ SITEURL }}/theme/images/logo.png">
           {% endif %}
-          {{ SITENAME }}
+          Home
       </a>
-      {% endif %}
 
         {% for item, url in MENU_LINKS %}
-        <a href="{{ url }}" class="item">{{ item }}</a>
+            <a href="{{ url }}" class="item">{{ item }}</a>
         {% endfor %}
     </div>
 </div>

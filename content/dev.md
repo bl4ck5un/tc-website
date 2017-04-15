@@ -1,6 +1,8 @@
-Title: Contract Source Code
+Title: Dev Info
 Date: 2017-4-6
-Category: Review
+slug: dev
+
+
 
     ::python
     def some():

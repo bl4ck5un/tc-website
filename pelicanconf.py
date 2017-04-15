@@ -4,7 +4,8 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Fan Zhang'
 SITENAME = u'Town Crier'
-SITEURL = 'http://www.town-crier.org/staging/'
+
+# SITEURL = 'http://www.town-crier.org/staging/'
 
 THEME = './themes/semantic-ui'
 
@@ -29,6 +30,7 @@ DEFAULT_PAGINATION = False
 
 MENU_LINKS = [
 ('Get Started', 'get-started.html'),
+('Dev', 'dev.html'),
 ('Research', 'research.html'),
 ('FAQ', 'faq.html'),
 ]
