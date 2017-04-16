@@ -5,21 +5,6 @@ Category: Tutorial
 
 # Get Started with Town Crier
 
-For smart contracts on blockchain systems such as Ethereum, access to real-world data is critical.
-A currency exchange contract must be able to learn current exchange rates.
-A trip insurance contract must determine whether flights arrive on time.
-A contract for the sale of a physical good needs to know whether the good was successfully delivered.
-These are just a few of the many examples of applications that can only run with knowledge of real-world data or events.
-A critical problem is: <i> Who can be trusted to provide data to smart contracts in a trustworthy way? </i>
-
-The Town Crier (TC) system addresses this problem by using <i> trusted hardware </i>, namely the Intel SGX instruction set, a new capability in certain Intel CPUs.
-TC obtains data from target websites specified in queries from application contracts.
-TC uses SGX to achieve what we call its <i>authenticity property</i>.
-<b> Assuming that you trust SGX, data delivered by TC from a website to an application contract is guaranteed to be free from tampering.</b>
-This authenticity property means that to trust TC data, you only need to trust Intel's implementation of SGX and the target website.
-You don't need to trust the operators of TC or anyone else.
-Even the operators of the TC server cannot tamper with its operation or, for that matter, see the data it's processing. 
-
 Using Town Crier is simple.
 To obtain data from a target website, an application contract sends a query to the `TownCrier` Contract, which serves as a front end for TC.
 This query consists of the query type, which specifies what kind of data is requsted and the data source, i.e., a trusted website, and some query parameters, namely the specifics of the query to the website.
@@ -33,24 +18,6 @@ SGX protections prevent even the operator of the server from peeking into the en
 Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handle <i> secret query data </i>.
 For example, a query could include a password used to log into a server or secret trading data.
 TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
-
-Thanks to its use of SGX and various innovations in its end-to-end design, Town Crier offers several properties that other oracles cannot achieve:
-<ol>
-  <li>Authenticity guarantee:</li>
-  There's no need to trust any particular service provider(s) in order to trust Town Crier data.
-  (You need only believe that SGX is properly implemented.) 
-  <li>Succinct replies:</li>
-  Town Crier can prune target website replies in a trustworthy way to provide short responses to queries.
-  It does not need to relay verbose website responses.
-  Such succintness is important in Ethereum, for instance, where message length determines transaction costs. 
-  <li>Confidential queries:</li>
-  Town Crier can handle <i> secret </i> query data in a trustworthy way.
-  This feature makes TC far more powerful and flexible than conventional oracles.
-</ol>
-
-For more details on TC, its implementation using SGX, and its security guarantees, please read our paper [Town Crier: An Authenticated Data Feed for Smart Contracts].
-
-TC can provide data in any ecosystem, but its first deployment is on Ethereum.
 
 ## Understand the `TownCrier` Contract
 
@@ -184,33 +151,6 @@ Then everything goes similarly to the procedure in the `Application` Contract.
 This is a simple mechanism to design such a flight insurance contract.
 You can look at [FlightInsurance.sol] for the complete `FligntInsurance` Contract logic.
 
-## Request types Town Crier currently support and formats
-
-
-| Type ID | Data and source | RequestData | Response |
-| ------- | --------------- | ----------- | -------- |
-| 1 | [Flight departure delay] |
-| 2 | [Steam exchange] |
-| 3 | [Stock ticker] |
-| 4 | [UPS tracking] |
-| 5 | [Coin market price] |
-| 6 | [Weather] |
-
-## Features of Town Crier in the future
-
-* SGX attestation
-* Respond with a delay
-* Encrypted query
-* More websites to suppport
-
-
-[Town Crier: An Authenticated Data Feed for Smart Contracts]: https://eprint.iacr.org/2016/168.pdf
 [TownCrier.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/TownCrier.sol
 [Application.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/Application.sol
 [FlightInsurance.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/FlightInsurance.sol
-[Flight departure delay]: http://flightaware.com/
-[Steam exchange]: http://store.steampowered.com/
-[Stock ticker]: https://finance.yahoo.com/
-[UPS tracking]: https://www.ups.com/
-[Coin market price]: https://coinmarketcap.com/
-[Weather]: https://darksky.net
