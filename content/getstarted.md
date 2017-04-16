@@ -23,7 +23,7 @@ Even the operators of the TC server cannot tamper with its operation or, for tha
 Using Town Crier is simple.
 To obtain data from a target website, an application contract sends a query to the Town Crier Contract, which serves as a front end for TC.
 This query consists of the query type, which specifies what kind of data is requsted and the data source, i.e., a trusted website, and some query parameters, namely the specifics of the query to the website.
-For example, if the requesting contract is seeking for the a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically https://finance.yahoo.com/ for this application in our TC implementation.
+For example, if the requesting contract is seeking for the a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically <https://finance.yahoo.com/> for this application in our TC implementation.
 
 Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
 The processing of the query happens inside an SGX-protected environment known as an "enclave".
@@ -120,6 +120,8 @@ To show how to interface with the Town Crier Contract, we present an Application
     
     The Application Contract needs to store the address of the TC Contract during creation so that it can call the ```request()``` and ```cancel()``` functions in the TC contract.
     
+    <b>The address of the TC Contract is <! TC address ></b>
+    
 * `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
     
     This line is to call `request()` in the TC Contract.
@@ -150,13 +152,13 @@ To show how to interface with the Town Crier Contract, we present an Application
 
 You can look at [Application.sol] for the complete Application Contract logic required to interface with TC.
 
-### A practical contract for flight insurance
+### A practical Flight Insurance Contract
 
 Suppose Alice wants to stand up a flight insurance service in the form of a smart contract AliceIns. A user can buy a policy by sending money to AliceIns. AliceIns offers a payout to the user should her insured flight be delayed or cancelled. (Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.)
 
 
 ## Request types Town Crier currently support and formats
-The address of the TC Contract is <! TC address >
+
 
 | Type ID | Data and source | RequestData | Response |
 | ------- | --------------- | ----------- | -------- |
