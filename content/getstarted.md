@@ -124,7 +124,7 @@ You can look at [Application.sol] for the complete `Application` Contract logic 
 The `Application` Contract above is only able to send queries to and receive responses from TC.
 For many real-life applications there is one critical factor missing: <b>timing</b>.
 A stock exchange contract which settles the exchange at a specified time needs to know the stock quote for that time.
-A trip insurance contract which needs to find out whether a flight departs on time must fetch the flight status after the scheduled departure time.
+A trip insurance contract which needs to find out whether a flight departs on time must fetch the flight state after the scheduled departure time.
 A contract for the sale of a physical good has to wait for a period for delivery after payment to check whether the good was successfully delivered.
 The immediate response TC currently supports cannot fulfill such requirements in these applications.
 So developers need to use other strategies to get around this limitation.
