@@ -1,6 +1,5 @@
 Title: Dev Info
 Date: 2017-4-6
-slug: dev
 toc: yes
 
 # Adress of the `TownCrier` Contract
@@ -8,49 +7,99 @@ toc: yes
 
 # Town Crier Scrapers
 
-Say something about scrapers. Maybe some diagrams.
+| Type | Data source | Request | Response | State |
+| ---- | ----------- | ------- | -------- | ----- |
+| 1 | [Flight departure delay] | Flight information | Flight delay | Working well |
+| 2 | [Steam exchange] | || TC not supporting encrypted query
+| 3 | [Stock ticker] | Stock symbol and date | Closing price | Website not stable |
+| 4 | [UPS tracking] | UPS tracking number | State of the package | Working well |
+| 5 | [Coin market price] | Cryptocurrency type | Current exchange rate | Working well |
+| 6 | [Weather] |
 
-## Flight Departure Delay
+# Query interfaces
 
-This scraper returns if a given flight is delayed based on the data from `www.flightaware.com`.
+## 1. Flight Departure Delay
 
-- **Data source**: `www.flightaware.com`
+This scraper returns the departure delay of a given flight.
+
+- **Data source**: <http://flightaware.com/>
 - **Input to TC** (64 bytes): 
     1. flight number
         - size: 32 bytes
         - type: `string` converted to `bytes32`, right padded with `0`s
-        - example: `FJM273` should be converted to `0x464a4d3237330000000000000000000000000000000000000000000000000000`
+        - example: `FJM273` should be `0x464a4d3237330000000000000000000000000000000000000000000000000000`
     2. scheduled departure time in [UNIX epoch time](https://en.wikipedia.org/wiki/Unix_time): 
         - size: 32 bytes
-        - type: `uint256` (big-endian encoded integer with leading zeros)
+        - type: `uint256`, big-endian encoded integer with leading zeros
         - example: `1492100100` should be `0x0000000000000000000000000000000000000000000000000000000058efa404`
-- **Return value:** `(error, delay)`
-    1. error: `uint256`.
-    2. delay: `uint256`, 0 or 1 indicating if the flight is delayed.
-- **Full example**: `TownCrier.request(1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x464a4d3237330000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000058efa404])`
+- **Return value** : `delay = uint256(respData)`
+	- `delay = 0`: flight not departed yet or not delayed
+	- `delay > 0 && delay < 2147483643`: flight delayed for `delay` seconds
+	- `delay = 2147483643`: flight cancelled
+- **Geth script snippet**: 
+```
+TownCrier.request.sendTransaction(1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x464a4d3237330000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000058efa404], {value: fee})
+```
 
+## 3. Stock ticker
 
-<ol>
-<li>Steam exchange</li>
-    
-<li>Stock ticker</li>
-Request: [stock symbol, date]
+This scraper returns the closing price of a given stock symbol on a specified date in USD.
 
-Response: 
+- **Data source**: <https://finance.yahoo.com/>
+- **Input to TC** (32 bytes): 
+    1. stock symbol
+        - size: 32 bytes
+        - type: `string` converted to `bytes32`, right padded with `0`s
+        - example: `GOOG` should be `0x474f4f4700000000000000000000000000000000000000000000000000000000`
+    2. [UNIX epoch time](https://en.wikipedia.org/wiki/Unix_time) for the date at 00:00 GMT: 
+        - size: 32 bytes
+        - type: `uint256`, big-endian encoded integer with leading zeros
+        - example: `1262390400`, standing for Jan 2nd, 2010, should be `0x000000000000000000000000000000000000000000000000000000004b3e8c80`
+- **Return value** : `price = uint256(respData)`, the closing price in USD.
+- **Geth script snippet**: 
+```
+TownCrier.request.sendTransaction(3, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x474f4f4700000000000000000000000000000000000000000000000000000000, 0x000000000000000000000000000000000000000000000000000000004b3e8c80], {value: fee})
+```
 
-<li>UPS tracking</li>
-Request: [UPS tracking number]
+## 4. UPS tracking
 
-* UPS tracking number: string converted to bytes32, padded with
+This scraper returns the status of a UPS package.
 
-Response:
+- **Data source**: <https://www.ups.com/>
+- **Input to TC** (64 bytes): 
+    1. UPS tracking number
+        - size: 32 bytes
+        - type: `string` converted to `bytes32`, right padded with `0`s
+        - example: `1ZE331480394808282` should be `0x315a453333313438303339343830383238320000000000000000000000000000`
+- **Return value** : `status = uint256(respData)`
+	- `status = 0`: package not found,
+	- `status = 1`: order processed
+	- `status = 2`: shipped
+	- `status = 3`: in transit
+	- `status = 4`: out for delivery
+	- `status = 5`: delivered
+- **Geth script snippet**: 
+```
+TownCrier.request.sendTransaction(4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x315a453333313438303339343830383238320000000000000000000000000000], {value: fee})
+```
 
-<li>Coin market price</li>
-Request: []
-    
-<li>Weather</li>
-</ol>
+## 5. Coin market price
 
+This scraper returns the current exchange rate of the queried cryptocurrency in USD.
+
+- **Data source**: <https://coinmarketcap.com/>
+- **Input to TC** (64 bytes): 
+    1. Cryptocurrency name
+        - size: 32 bytes
+        - type: `string` converted to `bytes32`, right padded with `0`s
+        - example: `bitcoin` should be `0x626974636f696e00000000000000000000000000000000000000000000000000`
+- **Return value** : `rate = uint256(respData)`, current exchange rate in USD.
+- **Geth script snippet**: 
+```
+TownCrier.request.sendTransaction(4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x626974636f696e00000000000000000000000000000000000000000000000000], {value: fee})
+```
+
+## 6. Weather
 
 # Features of Town Crier in the future
 
