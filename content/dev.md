@@ -1,5 +1,6 @@
 Title: Dev Info
 Date: 2017-4-6
+slug: dev
 toc: yes
 
 # Adress of the `TownCrier` Contract
