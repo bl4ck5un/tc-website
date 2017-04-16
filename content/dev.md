@@ -7,16 +7,6 @@ toc: yes
 
 # Request types Town Crier currently support and formats
 
-| Type | Data source | Request | Response |
-| ---- | ----------- | ------- | -------- |
-| 1 | [Flight departure delay] | Flight information | Flight delay |
-| 2 | [Steam exchange] | 
-| 3 | [Stock ticker] | Stock symbol and date | Closing price |
-| 4 | [UPS tracking] | UPS tracking number | State of the package |
-| 5 | [Coin market price] | Cryptocurrency type | Current exchange rate |
-| 6 | [Weather] |
-
-
 <ol>
 <li>Flight departure delay</li>
 Request: [flight number, scheduled departure time in UNIX epoch time]
