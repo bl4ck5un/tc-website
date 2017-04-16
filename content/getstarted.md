@@ -105,55 +105,58 @@ This interface consists of the following three functions.
 
 For more details, you can look at the source code of the contract [TownCrier.sol].
 
-## Application Contract upon Town Crier
+## Reference Application Contract for TC
 
-### A general application contract for requesting and responding
+### A general Application Contract for requesting and responding
 
-For an application contract upon Town Crier, here are the five basic components:
+To show how to interface with the Town Crier Contract, we present an Application Contract that does nothing othan than sending queries, logging responses and cancelling queries. It consists of a set of five basic components:
 
-* ```function() public payable;```
+* `function() public payable;`
 
-    The fallback function must be payable such that ```TownCrier``` contract could refund to this contract when certain condition meets. 
-    The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when ```TownCrier``` contract refund ether to it.
+    This fallback function must be payable so that TC can provide a refund under certain conditions.
+    The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when TC refunds ether to it.
     
-* ```function Application(TownCrier tc) public;```
+* `function Application(TownCrier tc) public;`
     
-    The Application contract needs to store the address of ```TownCrier``` contract during creation such that it could call ```request()``` and ```cancel()``` of TownCrier contract.
+    The Application Contract needs to store the address of the TC Contract during creation so that it can call the ```request()``` and ```cancel()``` functions in the TC contract.
     
-    The address of ```TownCrier``` contract is <! TC address >
+* `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
     
-* ```TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);```
-    
-    This line is to call ```request()``` of ```TownCrier``` contract.
-    If this is in the same contract as the callback function, then ```TC_CALLBACK_ADD``` could just be replaced by ```this```.
-    ```TC_CALLBACK_FID``` should be hardcoded as the first 4 bytes of hash of the callback function specification.
+    This line is to call `request()` in the TC Contract.
+    `TC_CALLBACK_ADD` is the address of the fallback function. If this line is in the same contract as the callback function, then `TC_CALLBACK_ADD` could simply be replaced by `this`.
+    `TC_CALLBACK_FID` should be hardcoded as the first 4 bytes of the hash of the callback function specification.
     
     Developers need to be careful with the fee sent with the function call.
-    In ```TownCrier``` contract, the gas limit for calling the callback function of the application contract is bounded by the fee a requester paid originally when sending the request.
-    In addition, Town Crier server sets the gas limit as 3e6 when sending a transaction to ```deliver()``` function of ```TownCrier``` contract.
+    TC requires at least <b>3e4</b> gas for all the operations other than forwarding the response to the Application Contract in `deliver()` function and the gas price is set as <b>5e10 wei</b>.
+    So a requester should pay no less than <b>1.5e15 wei</b> for one query otherwise the `request` call would fail and the TC Contract would return 0 as `requestId`.
+    Developers should deal with this case separately.
+    In the TC Contract, the gas limit for calling the callback function in the Application Contract is bounded by the fee a requester paid originally when sending the query.
+    If the callback function costs about 2e4 gas, for example, the least fee to be paid for one query should be (3e4 + 2e4) * 5e10 = 2.5e15 wei.
+    In addition, TC server sets the gas limit as <b>3e6</b> when sending a transaction to `deliver()` function in the TC Contract.
     If a requester paid too much for gas cost than the transaction allows, the excess ether cannot be used for operations of the callback function but will go directly to the SGX wallet, just like tips for Town Crier service.
 
-* ```function response(uint64 requestId, uint64 error, bytes32 respData) public;```
+* `function response(uint64 requestId, uint64 error, bytes32 respData) public;`
 
-	This is the function which will be called by ```TownCrier``` contract to deliver the response from Town Crier server.
-    The specification for it should be ```bytes4(sha3("response(uint64,uint64,bytes32)"))```.
+	This is the function which will be called by the TC Contract to deliver the response from TC server.
+    The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
     
-    Since the gas limit for sending a response back to ```TownCrier``` contract is set as 3e6 by Town Crier server, as mentioned above, the callback function should not be so complicated that might cost more gas than permitted.
-    The application contract deployer has better set a lowerbound for request fee such that the callback function won't run out of gas when get called by ```TownCrier``` contract.
+    Since the gas limit for sending a response back to the TC Contract is set as <b>3e6</b> by Town Crier server, as mentioned above, the callback function should not be so complicated that might cost more gas than permitted. Otherwise the callback function would run out of gas and fail. TC won't be responsible for such failure and will set the query as responded.
+    We suggest the Application Contract developers set a lowerbound for request fee such that the callback function won't run out of gas when receiving and processing response from TC.
 
-* ```TownCrier.cancel(requestId);```
+* `TownCrier.cancel(requestId);`
 
-	This line is for cancellation, calling the ```cancel()``` function of ```TownCrier``` contract.
-    A developer need to carefully set up the cancelled flag for the request before refund the requester in order to prevent reentrant attacks.
+	This line is for cancellation, calling the `cancel()` function in the TC Contract.
+    A developer need to carefully set up the cancelled flag for the request before refunding the requester in order to prevent reentrant attacks.
 
-You can look at [Application.sol] for the complete example application smart contract.
+You can look at [Application.sol] for the complete Application Contract logic required to interface with TC.
 
 ### A practical contract for flight insurance
 
-Suppose Alice wanted to provide a flight insurance service by deploying a smart contract such that clients would get paid when their flights insured are delayed or cancelled.
+Suppose Alice wants to stand up a flight insurance service in the form of a smart contract AliceIns. A user can buy a policy by sending money to AliceIns. AliceIns offers a payout to the user should her insured flight be delayed or cancelled. (Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.)
 
 
 ## Request types Town Crier currently support and formats
+The address of the TC Contract is <! TC address >
 
 | Type ID | Data and source | RequestData | Response |
 | ------- | --------------- | ----------- | -------- |
