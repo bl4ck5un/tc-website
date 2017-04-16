@@ -16,7 +16,8 @@ Request: [flight number, scheduled departure time in UNIX epoch time]
 
 Response: delay
 
-Example: `TownCrier.request(1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [])`
+Example: `TownCrier.request(1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x464a4d3237330000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000058efa404])`
+
 
 <li>Steam exchange</li>
     
