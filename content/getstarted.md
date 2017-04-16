@@ -131,15 +131,21 @@ The immediate response TC currently supports cannot fulfill such requirements in
 So developers need to use other strategies to get around this limitation.
 Here we present a design for flight insurance application.
 
+#### Application setting
+
 Suppose Alice wants to stand up a flight insurance service in the form of a smart contract `FlightInsurance`.
 A user can buy a policy for her flight by sending money to the `FlightInsurance` Contract.
 `FlightInsurance` offers a payout to the user should her insured flight be delayed or cancelled.
 (Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.) 
 
+#### Problem with the `Application` Contract
+
 Similarly as the `Application` Contract, `FlightInsurance` Contract should also consist of those five basic components.
 However, we don't want to query TC immediately after a user, say Bob, purchases a policy because if we do so, this will end up in two inappropriate cases.
 One is that Bob purchases a policy for a flight that has already been delayed or cancelled, which is unfair to Alice.
 The other is that Bob purchases a policy before the scheduled departure time of his flight so when the `FlightInsurance` Contract queries immediately, it will get response of not delayed since it has not even come to the time when the flight could be counted as delayed. This is unfair to Bob.
+
+#### A scheme to get around the problem
 
 To address this problem, we can separate two operations and deal with them at different times.
 The `FlightInsurance` Contract need to include a `Insure()` function for a user to buy a policy for his flight a certain period ahead of the scheduled departure time, say 24 hours.
@@ -151,6 +157,6 @@ Then everything goes similarly to the procedure in the `Application` Contract.
 This is a simple mechanism to design such a flight insurance contract.
 You can look at [FlightInsurance.sol] for the complete `FligntInsurance` Contract logic.
 
-[TownCrier.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/TownCrier.sol
-[Application.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/Application.sol
-[FlightInsurance.sol]: https://github.com/bl4ck5un/Town-Crier/blob/master/Contracts/FlightInsurance.sol
+[TownCrier.sol]: http://www.town-crier.org/code/TownCrier.sol
+[Application.sol]: http://www.town-crier.org/code/Application.sol
+[FlightInsurance.sol]: http://www.town-crier.org/code/FlightInsurance.sol
