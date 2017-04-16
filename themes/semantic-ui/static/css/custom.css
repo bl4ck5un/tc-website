@@ -128,6 +128,12 @@ body {
     }
 }
 
+#toc {
+    width: 250px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
 .article-huge {
     font-size: 4em !important;
 }

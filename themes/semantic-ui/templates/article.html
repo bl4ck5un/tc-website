@@ -19,7 +19,12 @@
     <span class="ui author">by {{ article.author }} on {{ article.date.strftime('%d %B %Y')}}</span>
     {% endif %}
 </div>
+
+
 <div class="ui text container tall stacked segment">
+    <div class="ui right attached rail large screen only" style="min-height: 500px;">
+        <div class="ui sticky toc" id="toc"></div>
+    </div>
     <!--<div class="overlay">-->
         <!--<div class="ui labeled icon vertical menu">-->
             <!--<a class="item sharer" data-sharer="twitter" data-title="{{ article.title}}" data-url="{{ SITEURL }}/{{ article.url }}"><i class="twitter icon"></i> Tweet</a>-->
@@ -28,7 +33,10 @@
             <!--<a class="item sharer" data-sharer="email" data-to="" data-title="{{ article.title}}" data-subject="Checkout this article!" data-url="{{ SITEURL }}/{{ article.url }}"><i class="mail icon"></i> E-mail</a>-->
         <!--</div>-->
     <!--</div>-->
-    {{ article.content }}
+    <div id="article-content">
+        {{ article.content }}
+    </div>
+
 
     {% if DISQUS_SITENAME %}
     {% include 'disqus.html' %}
@@ -38,4 +46,53 @@
 
 {% block extra_scripts %}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/sharer.js/0.2.4/sharer.min.js"></script>
+<script type="text/javascript" src="{{ SITEURL }}/theme/js/toc.min.js"></script>
+<script type="text/javascript">
+    /**
+     * Generates a table of contents for the document
+     * @param where the selector to which to append the T.O.C
+     * @param isOrdered ordered or unordered list?
+     * @param depth of the TOC
+     */
+    function generateTOC(where, root, isOrdered, tocDepth) {
+        var $result = where;
+        var list = isOrdered ? "ol" : "ul";
+        var depth = tocDepth || 6;
+        var curDepth = 0;
+        var counter = 0;
+        var select = root + ' h1';
+        for(var i = 2; i <= Math.min(depth, 6); i++) {
+            select += ", h" + i;
+        }
+        $(select).each(function() {
+            var depth = parseInt($(this).prop('tagName').charAt(1));
+            var htmlId = "h" + (++counter);
+            $(this).attr( { 'id': htmlId } );
+            var $li = $('<li></li>')
+                .append($('<a></a>')
+                    .html($(this).html())
+                    .attr( { 'href': '#' + htmlId } )
+                );
+            if(depth > curDepth) {
+                // going deeper
+                $result.append($('<' + list + '></' + list + '>').append($li));
+            } else if (depth < curDepth) {
+                // going shallower
+                $result.parents(list + ':eq(' + (curDepth - depth) + ')').append($li);
+            } else {
+                // same level
+                $result.parent().append($li);
+            }
+            $result = $li;
+            curDepth = depth;
+        });
+    }
+
+    $(document).ready(function(){
+        generateTOC($('#toc'),"article-content",false,3);
+        $('.ui.sticky').sticky({
+            offset: 100,
+            context: "#article-content"});
+    });
+</script>
 {% endblock %}
