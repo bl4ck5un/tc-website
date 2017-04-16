@@ -29,7 +29,7 @@ This interface consists of the following three functions.
 	For an application contract to call function `request()`, it needs to send in the following parameters.
     
     - `requestType`: the type of the query, for the Town Crier server to process it accordingly.
-    You'll see all the query types Town Crier currently supports in the following.
+    You'll see all the query types and respective formats that Town Crier currently supports on the [Dev page].
     
     - `callbackAddr`: the address of the application contract to which the response from Town Crier is forwarded.
     
@@ -87,7 +87,7 @@ To show how to interface with the `TownCrier` Contract, we present an `Applicati
     
     The `Application` Contract needs to store the address of the TC Contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
     
-    <b>The address of the TC Contract is <! TC address ></b>
+    The address of the TC Contract is on the [Dev page].
     
 * `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
     
@@ -157,6 +157,7 @@ Then everything goes similarly to the procedure in the `Application` Contract.
 This is a simple mechanism to design such a flight insurance contract.
 You can look at [FlightInsurance.sol] for the complete `FligntInsurance` Contract logic.
 
+[Dev page]: http://www.town-crier.org/staging/dev.html
 [TownCrier.sol]: http://www.town-crier.org/code/TownCrier.sol
 [Application.sol]: http://www.town-crier.org/code/Application.sol
 [FlightInsurance.sol]: http://www.town-crier.org/code/FlightInsurance.sol
