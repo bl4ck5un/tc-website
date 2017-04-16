@@ -31,11 +31,39 @@
     {% endblock %}
 
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/responsive.css">
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/gruvbox.css">
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/custom.css">
     <link rel="stylesheet" type="text/css" href="{{ SITEURL }}/theme/css/youtube.css">
 </head>
 <body>
+
+<div class="ui sidebar inverted vertical menu">
+    {% if SITEURL %}
+    <a href="{{ SITEURL }}" class="header item">
+        {% else %}
+        <a href="/" class="header item">
+            {% endif %}
+            Home
+        </a>
+    {% for item, url in MENU_LINKS %}
+    <a href="{{ url }}" class="item">{{ item }}</a>
+    {% endfor %}
+</div>
+
+<div class="pusher">
+
+    {% block topbar %}
+    <div class="ui inverted segment center aligned mobile only topbar">
+        <button class="ui compact inverted icon button sidebar-trigger">
+            <i class="sidebar icon"></i>
+        </button>
+        <h2>Town Crier</h2>
+    </div>
+    {% endblock %}
+
+
+
     {% include 'menu.html'%}
     {% block content %}
     {% endblock %}
@@ -59,5 +87,16 @@
     {% if DISQUS_SITENAME %}
     <script id="dsq-count-scr" src="//{{ DISQUS_SITENAME }}.disqus.com/count.js" async></script>
     {% endif %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('button.sidebar-trigger').click(function () {
+                    $('.ui.sidebar').sidebar('toggle');
+                }
+            );
+        });
+
+
+    </script>
+</div>
 </body>
 </html>

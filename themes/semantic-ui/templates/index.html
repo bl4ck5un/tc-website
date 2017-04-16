@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block topbar %}
+<div class="ui inverted segment center aligned mobile only topbar">
+    <button class="ui compact inverted icon button sidebar-trigger">
+        <i class="sidebar icon"></i>
+    </button>
+</div>
+{% endblock %}
+
 {% block content %}
 
 <!--<div class="ui text container center aligned article-top">-->
@@ -11,11 +19,8 @@
     <div class="sub header">An Authenticated Data Feed for Smart Contracts</div>
     <div>
         <a href="get-started.html">
-        <div class="ui inverted animated button" tabindex="0">
-            <div class="visible content">Get Started</div>
-            <div class="hidden content">
-                <i class="right arrow icon"></i>
-            </div>
+        <div class="ui inverted button" tabindex="0">
+            Get Started
         </div>
         </a>
     </div>
@@ -24,9 +29,6 @@
     {% include 'article_list.html' %}
 </div> -->
 
-<div class="ui vertical center aligned segment">
-
-
 <div class="ui text container">
     <h3 class="ui horizontal divider header">
         <i class="tag icon"></i>
@@ -34,22 +36,21 @@
     </h3>
 
     <p>Town Crier system is an authenticated data feed for smart contracts, a.k.a. an "oracle."
-        It was created by students and faculty at <a href="http://www.initc3.org">The Initiative for CryptoCurrencies and Contracts (IC3)</a>. </p>
+        It was created by students and faculty at <a href="http://wwww.initc3.org">The Initiative for CryptoCurrencies and Contracts (IC3)</a>. </p>
 
     <h3 class="ui horizontal divider header">
-        <i class="tag icon"></i>
+        <i class="diamond icon"></i>
         Why using Town Crier?
     </h3>
 
     <p>Smart contracts systems today lack trustworthy sources of data, as currently deployed oracles provide only weak provenance and confidentiality assurances. The Town Crier system leverages trusted hardware (Intel SGX) to provide a strong guarantee that data comes from an existing, trustworthy source. It also provides confidentiality, enabling smart contracts to support confidential queries and even manage user credentials.</p>
 
     <h3 class="ui horizontal divider header">
-        <i class="tag icon"></i>
+        <i class="code icon"></i>
         How to use Town Crier?
     </h3>
 
     <p>It's very easy! Check out the <a href="get-started.html">Get Started</a> tutorial.</p>
 </div>
 
-</div>
 {% endblock %}

@@ -10,7 +10,7 @@ body {
 #hero {
     background: #282828 !important;
     padding: 4rem !important;
-    margin-top: 50px !important;
+    margin-top: 50px;
     border-radius: 0 !important;
     margin-bottom: 2rem;
 }
@@ -24,10 +24,47 @@ body {
     font-size: 2rem;
     margin-top: 1rem;
     margin-bottom: 2rem;
+    line-height: normal;
 }
 
 .articles {
     margin-bottom: 50px !important;
+}
+
+
+@media (max-width: 767px) {
+    #hero {
+        margin-top: -1rem;
+    }
+
+    #hero .header, #hero h1 {
+        color: #fabd2f;
+        font-size: 3rem;
+    }
+
+    #hero .sub.header {
+        font-size: 1.5rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        line-height: normal;
+    }
+}
+
+.mobile.only.topbar {
+    background: #282828 !important;
+    border-radius: 0;
+}
+
+.mobile.only.topbar h2 {
+    margin-top: 0;
+    color: #fabd2f;
+}
+
+.sidebar-trigger {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 999;
 }
 
 .main.menu {
@@ -73,13 +110,22 @@ body {
 }
 
 .ui.footer.segment {
-    margin: 0;
+    border: none;
+    margin-top: 1rem;
     padding: 1rem;
 }
 
 .article-top {
     margin-top: 170px !important;
     padding-bottom: 50px !important;
+}
+
+@media (max-width: 767px) {
+    .article-top {
+        margin-top: 5rem !important;
+        font-size: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
 }
 
 .article-huge {
