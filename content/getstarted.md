@@ -1,7 +1,6 @@
 Title: Get Started
 Date: 2017-4-6
-Category: Tutorial
-
+toc: yes
 
 # Get Started with Town Crier
 

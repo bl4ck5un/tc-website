@@ -60,11 +60,13 @@
         var depth = tocDepth || 6;
         var curDepth = 0;
         var counter = 0;
-        var select = root + ' h1';
+        var select = 'h1';
         for(var i = 2; i <= Math.min(depth, 6); i++) {
             select += ", h" + i;
         }
-        $(select).each(function() {
+
+        var root_obj = $(root);
+        root_obj.children(select).each(function() {
             var depth = parseInt($(this).prop('tagName').charAt(1));
             var htmlId = "h" + (++counter);
             $(this).attr( { 'id': htmlId } );
@@ -87,12 +89,16 @@
             curDepth = depth;
         });
     }
+</script>
 
+{% if article.toc %}
+<script type="text/javascript">
     $(document).ready(function(){
-        generateTOC($('#toc'),"article-content",false,3);
+        generateTOC($('#toc'),"#article-content",false,3);
         $('.ui.sticky').sticky({
             offset: 100,
             context: "#article-content"});
     });
 </script>
+{% endif %}
 {% endblock %}
