@@ -5,68 +5,105 @@ Category: Tutorial
 
 # Get Started with Town Crier
 
-For smart contracts on blockchain systems, it's currently difficult to get real-world data because authentication for the data fed back to the blockchain is a crucial issue.
-A currency exchange contract requires exchange ratio.
-A trip insurance contract requires the whether information.
-A trade contract requires delivery result.
-There are a lot of examples of applications that cannot run without real-world data feed.
-The question is who should be trusted to feed such data into smart contracts.
+For smart contracts on blockchain systems such as Ethereum, access to real-world data is critical.
+A currency exchange contract must be able to learn current exchange rates.
+A trip insurance contract must determine whether flights arrive on time.
+A contract for the sale of a physical good needs to know whether the good was successfully delivered.
+These are just a few of the many examples of applications that can only run with knowledge of real-world data or events.
+A critical problem is: <i> Who can be trusted to provide data to smart contracts in a trustworthy way? </i>
 
-<! Brief idea of Oraclize and comparison with TC required >
-The Town Crier system addresses this problem by using trusted hardware such as Intel SGX to provide an authenticated data feed.
-When using the data fed by the Town Crier system in smart contracts, people don't have to trust any other party except SGX and the website where the data is from.
+The Town Crier (TC) system addresses this problem by using <i> trusted hardware </i>, namely the Intel SGX instruction set, a new capability in certain Intel CPUs.
+TC obtains data from target websites specified in queries from application contracts.
+TC uses SGX to achieve what we call its <i>authenticity property</i>.
+<b> Assuming that you trust SGX, data delivered by TC from a website to an application contract is guaranteed to be free from tampering.</b>
+This authenticity property means that to trust TC data, you only need to trust Intel's implementation of SGX and the target website.
+You don't need to trust the operators of TC or anyone else.
+Even the operators of the TC server cannot tamper with its operation or, for that matter, see the data it's processing. 
 
-In order to get certain data, a smart contract may send a request to the Town Crier server.
-Then the Town Crier server will fetch required data from a trusted website and send it back to the contract.
-The parsing of a request and the generation of a response with SGX's signature are processed on an SGX enclave inside the Town Crier server.
-The fetching of required data is done via TLS connection between the enclave and the website.
-SGX guarantees confidentiality and integrity, which means the status of a program running on an SGX enclave cannot be either revealed or modified by an adversary.
-TLS provides a secure channel for the communication of two parties, which also guarantees confidentiality and integrity.
+Using Town Crier is simple.
+To obtain data from a target website, an application contract sends a query to the Town Crier Contract, which serves as a front end for TC.
+This query consists of the query type, which specifies what kind of data is requsted and the data source, i.e., a trusted website, and some query parameters, namely the specifics of the query to the website.
+For example, if the requesting contract is seeking for the a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically https://finance.yahoo.com/ for this application in our TC implementation.
 
-For more details of Town Crier system and its security guarantees, please look at our paper [Town Crier: An Authenticated Data Feed for Smart Contracts].
+Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
+The processing of the query happens inside an SGX-protected environment known as an "enclave".
+The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
+SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network. 
 
-## Understand the ```TownCrier``` Contract
+Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handle <i> secret query data </i>.
+For example, a query could include a password used to log into a server or secret trading data.
+TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
 
-The ```TownCrier``` contract provides uniform interfaces for different application contracts to send requests to the Town Crier server and for the Town Crier server to respond to applications.
-It consists of the following three functions.
+Thanks to its use of SGX and various innovations in its end-to-end design, Town Crier offers several properties that other oracles cannot achieve:
+<ol>
+  <li>Authenticity guarantee:</li>
+  There's no need to trust any particular service provider(s) in order to trust Town Crier data.
+  (You need only believe that SGX is properly implemented.) 
+  <li>Succinct replies:</li>
+  Town Crier can prune target website replies in a trustworthy way to provide short responses to queries.
+  It does not need to relay verbose website responses.
+  Such succintness is important in Ethereum, for instance, where message length determines transaction costs. 
+  <li>Confidential queries:</li>
+  Town Crier can handle <i> secret </i> query data in a trustworthy way.
+  This feature makes TC far more powerful and flexible than conventional oracles.
+</ol>
 
-* ```request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint256 timestamp, bytes32[] requestData) public payable returns(uint64);```
+For more details on TC, its implementation using SGX, and its security guarantees, please read our paper [Town Crier: An Authenticated Data Feed for Smart Contracts].
 
-	For an application contract to call function ```request()```, it needs to send in the following parameters.
-    
-    - ```requestType```: the type of the request, for the Town Crier server to process it accordingly. You'll see all the request types Town Crier currently supports in the following.
-    
-    - ```callbackAddr```: the address of the application contract to forward the response from the Town Crier to.
-    
-    - ```callbackFID```: the specification for the callback function in application contract to forward the response from the Town Crier.
-    
-    - ```timestamp```: parameter required for a potential feature. Currently Town Crier server could only send response back once discover the request and successfully fetch the data. We expect to make it support fetching data at a certain point of time and then responding, in the future. For now developers don't need to concern about this and just setting it as 0 would be fine.
-    
-    - ```requestData```: data required to specifying the request. The format will be specified together with request types.
+TC can provide data in any ecosystem, but its first deployment is on Ethereum.
 
-    By calling this function, the request is logged by event ```RequestInfo()```, and then the function will return ```requestId``` which is assigned to this request such that the requester could use it to look up the logs for response or status of the request.
-    The Town Crier server will watch events and process the request once find one ```RequestInfo()```. 
+## Understand the Town Crier Contract
+
+The Town Crier contract provides a uniform interface for queries from and replies to an Application Contract, which we also refer to as a "Requester".
+This interface consists of the following three functions.
+
+* `request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint256 timestamp, bytes32[] requestData) public payable returns(uint64);`
+
+	For an application contract to call function `request()`, it needs to send in the following parameters.
     
-    Requesters should pay for the gas cost for the TownCrier server to send the response to the blockchain afterwards.
-    ```msg.value``` is the amount of wei a requester pays and recorded as ```Request.fee```.
+    - `requestType`: the type of the query, for the Town Crier server to process it accordingly.
+    You'll see all the query types Town Crier currently supports in the following.
     
-* ```deliver(uint64 requestId, bytes32 paramsHash, uing64 error, bytes32 respData) public;```
+    - `callbackAddr`: the address of the Application Contract to which the response from Town Crier is forwarded.
     
-    After fetching data and generating the response for the request with ```requestId```, the Town Crier server sends a transaction calling function ```deliver()```. 
-    ```deliver()``` verifies that the function call is made by SGX and that the hash of request parameters is correct, and then it will call the callback function of the application contract to transmit the response. 
+    - `callbackFID`: specification of the callback function in the Application contract to receive the response from TC.
+    
+    - `timestamp`: parameter required for a potential feature.
+    Currently TC only responds to requests immediately.
+    Eventually TC will support requests with pre-specified future query times.
+    At present, developers can ignore this parameter and just set it to 0.
+    
+    - `requestData`: data specifying query parameters.
+    The format depends on the query type.
+
+    When this function is called, a request is logged by event `RequestInfo()`.
+    The function returns a `requestId` that is uniquely assigned to this request.
+    The Application Contract can use the `requestId` to check the response or status of a request in its logs.
+    The Town Crier server watches events and processes a request once logged by `RequestInfo()`. 
+    
+    Requesters must prepay the gas cost incurred by the TownCrier server in relaying a response to the Application Contract.
+    `msg.value` is the amount of wei a requester pays and recorded as `Request.fee`.
+    
+* `deliver(uint64 requestId, bytes32 paramsHash, uing64 error, bytes32 respData) public;`
+    
+    After fetching data and generating the response for the request with `requestId`, TC sends a transaction calling function `deliver()`. 
+    `deliver()` verifies that the function call is made by SGX and that the hash of query parameters is correct.
+    Then it calls the callback function of the Application Contract to transmit the response. 
    
-    The response includes ```error``` and ```respData```.
-    The application contract can use ```respData``` if there's no exception, which could be indicated by ```error = 0```.
-    The fee paid by requester when requesting will go to the SGX account.
-    If ```error = 1```, the request is invalid or cannot be found on the website.
-    Otherwise ```error > 1``` indicates that the error exists inside Town Crier server and the requester sould be refunded. 
+    The response includes `error` and `respData`.
+    If `error = 0`, the Application Contract request has been successfully processed and the Application Contract can then safely use `respData`.
+    The fee paid by the Application Contract for the request is consumed by TC.
+    If `error = 1`, the Application Contract request is invalid or cannot be found on the website.
+    In this case, similarly, the fee is consumed by TC. 
+    If `error > 1`, then an error has occured in the Town Crier server.
+    In this case, the fee is fully refunded but the transaction cost for requesting by the Application Contract won't be compensated. 
     
-* ```cancel(uint64 requestId) public returns(bool);```
+* `cancel(uint64 requestId) public returns(bool);`
     
-    A requester could cancel a request which hasn't been responded to. 
-    The fee paid by requester would be partially refunded. 
+    A requester can cancel a request whose response has not yet been issued. 
+    The fee paid by the Appliciation Contract is then refunded (minus processing costs, denoted as cancellation fee). 
 
-For more details, you can look into the source code of the contract [TownCrier.sol].
+For more details, you can look at the source code of the contract [TownCrier.sol].
 
 ## Application Contract upon Town Crier
 
@@ -114,9 +151,7 @@ You can look at [Application.sol] for the complete example application smart con
 ### A practical contract for flight insurance
 
 Suppose Alice wanted to provide a flight insurance service by deploying a smart contract such that clients would get paid when their flights insured are delayed or cancelled.
-```
 
-```
 
 ## Request types Town Crier currently support and formats
 
@@ -133,6 +168,8 @@ Suppose Alice wanted to provide a flight insurance service by deploying a smart 
 
 * SGX attestation
 * Respond with a delay
+* Encrypted query
+* More websites to suppport
 
 
 [Town Crier: An Authenticated Data Feed for Smart Contracts]: https://eprint.iacr.org/2016/168.pdf
