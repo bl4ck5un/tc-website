@@ -34,7 +34,7 @@ This scraper returns the departure delay of a given flight.
         - example: `1492100100` should be `0x0000000000000000000000000000000000000000000000000000000058efa404`
 - **Return value** : `delay = uint256(respData)`
 	- `delay = 0`: flight not departed yet or not delayed
-	- `delay > 0 && delay < 2147483643`: flight delayed for `delay` seconds
+	- `delay > 0 && delay < 2147483643`: flight delay in seconds
 	- `delay = 2147483643`: flight cancelled
 - **Geth script snippet**: 
 ```
