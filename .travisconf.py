@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
+
 from __future__ import unicode_literals
 
 AUTHOR = u'TC Team'
@@ -31,6 +32,8 @@ MENU_LINKS = [
 ('Research', 'research.html'),
 ('FAQ', 'faq.html'),
 ]
+
+STATIC_PATHS = ['code',]
 
 LOGOPATH = '/theme/images/logo-tc.png'
 

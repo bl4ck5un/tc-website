@@ -36,6 +36,8 @@ MENU_LINKS = [
 ('FAQ', 'faq.html'),
 ]
 
+STATIC_PATHS = ['code',]
+
 LOGOPATH = '/theme/images/logo-tc.png'
 
 LINKS = [
