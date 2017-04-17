@@ -1,3 +1,10 @@
+pragma solidity ^0.4.9;
+
+contract TownCrier {
+    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
+    function cancel(uint64 requestId) public returns (bool);
+}
+
 contract FlightInsurance {
     struct Policy{
         address requester;
