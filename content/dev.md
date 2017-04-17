@@ -12,8 +12,8 @@ toc: yes
 | ---- | ----------- | ------- | -------- | ----- |
 | 1 | [Flight departure delay] | Flight information | Flight delay | <i class="checkmark icon"></i> |
 | 2 | [Steam exchange] | || encrypted query not supported
-| 3 | [Stock ticker] | Stock symbol and date | Closing price | Website not stable |
-| 4 | [UPS tracking] | UPS tracking number | State of the package | <i class="checkmark icon"></i> |
+| 3 | [Stock ticker] | Stock symbol and date | Closing price | API not stable |
+| 4 | [UPS tracking] | UPS tracking number | State of the package | API not stable |
 | 5 | [Coin market price] | Cryptocurrency name | Current exchange rate | <i class="checkmark icon"></i> |
 | 6 | [Weather] |
 
