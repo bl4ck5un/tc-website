@@ -1,3 +1,10 @@
+pragma solidity ^0.4.9;
+
+contract TownCrier {
+    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
+    function cancel(uint64 requestId) public returns (bool);
+}
+
 contract Application {
     event Request(int64 requestId, address requester, uint dataLength, bytes32[] data); // log for requests
     event Response(int64 requestId, address requester, uint64 error, uint data); // log for responses
