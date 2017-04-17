@@ -4,7 +4,7 @@ slug: dev
 toc: yes
 
 # Adress of the `TownCrier` Contract
-<! tc address>
+`0xc3847c4de90b83cb3f6b1e004c9e6345e0b9fc27` on the Ropsten Testnet (Network Id: 3).
 
 # Town Crier Scrapers
 
