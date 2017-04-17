@@ -1,3 +1,10 @@
+pragma solidity ^0.4.9;
+
+contract TownCrier {
+    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
+    function cancel(uint64 requestId) public returns (bool);
+}
+
 contract Application {
     event Request(int64 requestId, address requester, uint dataLength, bytes32[] data); // log for requests
     event Response(int64 requestId, address requester, uint64 error, uint data); // log for responses
@@ -33,7 +40,7 @@ contract Application {
             return;
         }
 
-        uint64 requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData); // calling request() of the TownCrier Contract
+        uint64 requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData); // calling request() in the TownCrier Contract
         if (requestId == 0) {
             // The request fails.
             // Refund the requester.
@@ -78,7 +85,7 @@ contract Application {
             return;
         }
 
-        bool tcCancel = TC_CONTRACT.cancel(requestId); // calling cancel() of the TownCrier Contract
+        bool tcCancel = TC_CONTRACT.cancel(requestId); // calling cancel() in the TownCrier Contract
         if (tcCancel) {
             // Successfully cancels the request in the TownCrier Contract,
             // then refund the requester with (fee - cancellation fee).

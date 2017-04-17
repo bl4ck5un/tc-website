@@ -19,16 +19,16 @@ Even the operators of the TC server cannot tamper with its operation or, for tha
 
 Thanks to its use of SGX and various innovations in its end-to-end design, Town Crier offers several properties that other oracles cannot achieve:
 <ol>
-  <li>Authenticity guarantee:</li>
+  <li><b>Authenticity guarantee:</b>
   There's no need to trust any particular service provider(s) in order to trust Town Crier data.
-  (You need only believe that SGX is properly implemented.) 
-  <li>Succinct replies:</li>
+  (You need only believe that SGX is properly implemented.) </li>
+  <li><b>Succinct replies:</b>
   Town Crier can prune target website replies in a trustworthy way to provide short responses to queries.
-  It does not need to relay verbose website responses.
+  It does not need to relay verbose website responses.</li>
   Such succintness is important in Ethereum, for instance, where message length determines transaction costs. 
-  <li>Confidential queries:</li>
+  <li><b>Confidential queries:</b>
   Town Crier can handle <i> secret </i> query data in a trustworthy way.
-  This feature makes TC far more powerful and flexible than conventional oracles.
+  This feature makes TC far more powerful and flexible than conventional oracles.</li>
 </ol>
 
 For more details on TC, its implementation using SGX, and its security guarantees, please read our paper [Town Crier: An Authenticated Data Feed for Smart Contracts].

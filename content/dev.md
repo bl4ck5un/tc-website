@@ -119,8 +119,16 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 # Features of Town Crier in the future
 
 * Respond with a delay
+
+	Currently TC could only respond to a query immediately once discover it. The `FlightInsurance` Contract, for example, requires a user to send two separate transactions, calling `insure()` and `request()` respectively, for one query due to this limitation. If TC supports the feature of responding with a delay, a user could buy a policy a certain period ahead the departure time. And within this single transaction, he could use the parameter `timestamp` in the `request()` interface to ask TC not to fetch data from the website until it has come to the scheduled departure time. Only the flight state scraped then matters in this application. 
+    
 * Encrypted query
+
+	In some applications such as the Steam Trade, a user's account and key is required to access the trade information on the website. Such sensitive data in query should be encrypted before sent to the contract. Currently TC could only process plain data but we expect to add this feature in the near future.
+
 * More websites to suppport
+
+	There are only a few scrapers so applications TC can support are very limited. We look forward to your proposals and designing scrapers and applications for TC!
 
 
 [Flight departure delay]: http://flightaware.com/
