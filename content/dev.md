@@ -1,5 +1,6 @@
 Title: Dev Info
 Date: 2017-4-6
+slug: dev
 toc: yes
 
 # Adress of the `TownCrier` Contract
@@ -9,16 +10,16 @@ toc: yes
 
 | Type | Data source | Request | Response | State |
 | ---- | ----------- | ------- | -------- | ----- |
-| 1 | [Flight departure delay] | Flight information | Flight delay | Working well |
-| 2 | [Steam exchange] | || TC not supporting encrypted query
+| 1 | [Flight departure delay] | Flight information | Flight delay | <i class="checkmark icon"></i> |
+| 2 | [Steam exchange] | || encrypted query not supported
 | 3 | [Stock ticker] | Stock symbol and date | Closing price | Website not stable |
-| 4 | [UPS tracking] | UPS tracking number | State of the package | Working well |
-| 5 | [Coin market price] | Cryptocurrency type | Current exchange rate | Working well |
+| 4 | [UPS tracking] | UPS tracking number | State of the package | <i class="checkmark icon"></i> |
+| 5 | [Coin market price] | Cryptocurrency name | Current exchange rate | <i class="checkmark icon"></i> |
 | 6 | [Weather] |
 
 # Query interfaces
 
-## 1. Flight Departure Delay
+## Flight Departure Delay
 
 This scraper returns the departure delay of a given flight.
 
@@ -36,12 +37,16 @@ This scraper returns the departure delay of a given flight.
 	- `delay = 0`: flight not departed yet or not delayed
 	- `delay > 0 && delay < 2147483643`: flight delay in seconds
 	- `delay = 2147483643`: flight cancelled
-- **Geth script snippet**: 
-```
-TownCrier.request.sendTransaction(1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x464a4d3237330000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000058efa404], {value: fee})
-```
+- **Geth script snippet**:
 
-## 3. Stock ticker
+        ::javascript
+        TownCrier.request.sendTransaction(
+            1, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, 
+            [0x464a4d3237330000000000000000000000000000000000000000000000000000, 
+            0x0000000000000000000000000000000000000000000000000000000058efa404], 
+            {value: fee})
+
+## Stock ticker
 
 This scraper returns the closing price of a given stock symbol on a specified date in USD.
 
@@ -56,12 +61,16 @@ This scraper returns the closing price of a given stock symbol on a specified da
         - type: `uint256`, big-endian encoded integer with leading zeros
         - example: `1262390400`, standing for Jan 2nd, 2010, should be `0x000000000000000000000000000000000000000000000000000000004b3e8c80`
 - **Return value** : `price = uint256(respData)`, the closing price in USD.
-- **Geth script snippet**: 
-```
-TownCrier.request.sendTransaction(3, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x474f4f4700000000000000000000000000000000000000000000000000000000, 0x000000000000000000000000000000000000000000000000000000004b3e8c80], {value: fee})
-```
+- **Geth script snippet**:
+ 
+        ::javascript
+        TownCrier.request.sendTransaction(
+            3, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, 
+            [0x474f4f4700000000000000000000000000000000000000000000000000000000, 
+            0x000000000000000000000000000000000000000000000000000000004b3e8c80], 
+            {value: fee})
 
-## 4. UPS tracking
+## UPS tracking
 
 This scraper returns the status of a UPS package.
 
@@ -79,11 +88,14 @@ This scraper returns the status of a UPS package.
 	- `status = 4`: out for delivery
 	- `status = 5`: delivered
 - **Geth script snippet**: 
-```
-TownCrier.request.sendTransaction(4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x315a453333313438303339343830383238320000000000000000000000000000], {value: fee})
-```
 
-## 5. Coin market price
+        ::javascript
+        TownCrier.request.sendTransaction(
+            4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, 
+            [0x315a453333313438303339343830383238320000000000000000000000000000], 
+            {value: fee})
+
+## Coin market price
 
 This scraper returns the current exchange rate of the queried cryptocurrency in USD.
 
@@ -95,11 +107,14 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
         - example: `bitcoin` should be `0x626974636f696e00000000000000000000000000000000000000000000000000`
 - **Return value** : `rate = uint256(respData)`, current exchange rate in USD.
 - **Geth script snippet**: 
-```
-TownCrier.request.sendTransaction(4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, [0x626974636f696e00000000000000000000000000000000000000000000000000], {value: fee})
-```
 
-## 6. Weather
+        ::javascript
+        TownCrier.request.sendTransaction(
+            4, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, 
+            [0x626974636f696e00000000000000000000000000000000000000000000000000], 
+            {value: fee})
+
+## Weather
 
 # Features of Town Crier in the future
 
