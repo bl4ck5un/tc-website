@@ -157,6 +157,6 @@ This is a simple mechanism to design such a flight insurance contract.
 You can look at [FlightInsurance.sol] for the complete `FligntInsurance` Contract logic.
 
 [Dev page]: http://www.town-crier.org/staging/dev.html
-[TownCrier.sol]: http://www.town-crier.org/code/TownCrier.sol
-[Application.sol]: http://www.town-crier.org/code/Application.sol
-[FlightInsurance.sol]: http://www.town-crier.org/code/FlightInsurance.sol
+[TownCrier.sol]: code/TownCrier.sol
+[Application.sol]: code/Application.sol
+[FlightInsurance.sol]: code/FlightInsurance.sol
