@@ -128,7 +128,7 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 
 * More websites to suppport
 
-	There are only a few scrappers so applications TC can support are very limited. We look forward to your proposals and designing scrappers and applications for TC!
+	There are only a few scrapers so applications TC can support are very limited. We look forward to your proposals and designing scrapers and applications for TC!
 
 
 [Flight departure delay]: http://flightaware.com/
