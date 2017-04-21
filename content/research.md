@@ -18,7 +18,7 @@ Category: Review
 
 The Town Crier paper is published at CCS'16.
 
-- The conference version is available [online](http://www.fanzhang.me/files/pubs/tc-ccs16-final.pdf).
+- The conference version is available [online](http://dl.acm.org/citation.cfm?id=2978326&CFID=753354823&CFTOKEN=95141632).
 - An extended version with more technical details and examples is on [IACR ePrint](https://eprint.iacr.org/2016/168.pdf).
 
 If you need to cite Town Crier, please use the following:
