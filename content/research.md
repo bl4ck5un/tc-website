@@ -4,7 +4,7 @@ Date: 2017-4-6
 Category: Review
 
 # Featured Talks
-  
+
 - __Using Hardware Enclaves to Provide Trusted Data to Smart Contracts__ (Episode 164) by Prof. Ari Juels.
 
 <div class="youtube youtube-16x9">
@@ -18,7 +18,7 @@ Category: Review
 
 The Town Crier paper is published at CCS'16.
 
-- The conference version is available [online](http://www.fanzhang.me/files/pubs/towncrier-ccs16-final.pdf).
+- The conference version is available [online](http://www.fanzhang.me/files/pubs/tc-ccs16-final.pdf).
 - An extended version with more technical details and examples is on [IACR ePrint](https://eprint.iacr.org/2016/168.pdf).
 
 If you need to cite Town Crier, please use the following:
