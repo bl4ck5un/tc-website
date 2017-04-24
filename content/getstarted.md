@@ -13,11 +13,11 @@ Behind the scenes, when it receives a query from an application contract, the TC
 The processing of the query happens inside an SGX-protected environment known as an "enclave".
 The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
 SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network. 
-<! figure for data flow>
+<!-- figure for data flow -->
 
 Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handle <i> secret query data </i>.
 For example, a query could include a password used to log into a server or secret trading data.
-TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else). <! TBD>
+TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else). <!-- TBD -->
 
 ## Understand the `TownCrier` Contract
 
@@ -86,8 +86,6 @@ pragma solidity ^0.4.9;
 For [Mist] users, the current stable version of Mist only supports solidity ^0.4.8. 
 
 Second, you need to include in your contract source code the function declaration headers of the `TownCrier` Contract so that the application contract can call those functions with the address of the `TownCrier` Contract.
-
-
 ```
 contract TownCrier {
     function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
@@ -95,18 +93,54 @@ contract TownCrier {
 }
 ```
 
-The `Application` Contract consists of a set of five basic components:
+Third, let's look at the layout of the `Application` Contract:
+```
+contract Application {
+    event Request(int64 requestId, address requester, uint dataLength, bytes32[] data);
+    event Response(int64 requestId, address requester, uint64 error, uint data);
+    event Cancel(uint64 requestId, address requester, bool success);
+
+    bytes4 constant TC_CALLBACK_FID = bytes4(sha3("response(uint64,uint64,bytes32)"));
+
+    address[2**64] requesters;
+    uint[2**64] fee;
+
+    function() public payable;
+    function Application(TownCrier tcCont) public;
+    function request(uint8 requestType, bytes32[] requestData) public payable;
+    function response(uint64 requestId, uint64 error, bytes32 respData) public;
+    function cancel(uint64 requestId) public;
+}
+```
+* The events `Request()`, `Response` and `Cancel()` keeps logs of the `requestId` assigned to a query, the response from TC and the result of a cancellation respectively for a user to fetch from the blockchain.
+* The constant `TC_CALLBACK_FID` is the first 4 bytes of the hash of the function `response()` that the `TownCrier` Contract calls when relaying the response from TC. The name of the callback function can differ but the three parameters should be exactly the same as in this example.
+* The address array `requesters` stores the addresses of the requesters.
+* The uint array `fee` stores the amounts of wei requesters pay for their queries.
+
+As you can see above, the `Application` Contract consists of a set of five basic functions:
 
 * `function() public payable;`
 
     This fallback function must be payable so that TC can provide a refund under certain conditions.
     The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when TC refunds ether to it.
+    In our contract, it simply does nothing.
+    ```
+    function() public payable {}
+    ```
     
 * `function Application(TownCrier tc) public;`
     
     This is the constructor which registers the address of the TC Contract and the owner of this contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
-    
-    The address of the TC Contract is on the [Dev page].
+    ```
+    TownCrier public TC_CONTRACT;
+    address owner; // creator of this contract
+
+    function Application(TownCrier tcCont) public {
+        TC_CONTRACT = tcCont;
+        owner = msg.sender;
+    }
+    ```
+    The address of the TC Contract is on the [Dev page]. Our current deployment on the Ropsten Testnet (Revived Chain) is `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`.
     
 * `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
     
