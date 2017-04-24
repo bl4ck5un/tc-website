@@ -13,10 +13,11 @@ Behind the scenes, when it receives a query from an application contract, the TC
 The processing of the query happens inside an SGX-protected environment known as an "enclave".
 The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
 SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network. 
+<! figure for data flow>
 
 Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handle <i> secret query data </i>.
 For example, a query could include a password used to log into a server or secret trading data.
-TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
+TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else). <! TBD>
 
 ## Understand the `TownCrier` Contract
 
@@ -25,7 +26,7 @@ This interface consists of the following three functions.
 
 * `request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint256 timestamp, bytes32[] requestData) public payable returns(uint64);`
 
-	For an application contract to call function `request()`, it needs to send the following parameters.
+	An application contract sends queries to TC by calling function `request()`, and it needs to send the following parameters.
     
     - `requestType`: indicates the query type. You can find the query types and respective formats that Town Crier currently 
     supports on the [Dev page].
@@ -66,7 +67,8 @@ This interface consists of the following three functions.
     
 * `cancel(uint64 requestId) public returns(bool);`
     
-    A requester can cancel a request whose response has not yet been issued. 
+    A requester can cancel a request whose response has not yet been issued by calling function `cancel()`.
+    `requestId` is required to specify the query. 
     The fee paid by the Appliciation Contract is then refunded (minus processing costs, denoted as cancellation fee). 
 
 For more details, you can look at the source code of the contract [TownCrier.sol].
@@ -75,7 +77,24 @@ For more details, you can look at the source code of the contract [TownCrier.sol
 
 ### An application contract for general requesting and responding
 
-To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing othan than sending queries, logging responses and cancelling queries. It consists of a set of five basic components:
+To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing othan than sending queries, logging responses and cancelling queries.
+
+First, you need to annotate your contract with the version pragma:
+
+:::shell
+pragma solidity ^0.4.9;
+
+
+Second, you need to include in your contract source code the function declaration headers of the `TownCrier` Contract so that the application contract can call those functions with the address of the `TownCrier` Contract.
+
+:::shell
+contract TownCrier {
+    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
+    function cancel(uint64 requestId) public returns (bool);
+}
+
+
+The `Application` Contract consists of a set of five basic components:
 
 * `function() public payable;`
 
@@ -84,7 +103,7 @@ To show how to interface with the `TownCrier` Contract, we present a skeleton `A
     
 * `function Application(TownCrier tc) public;`
     
-    The `Application` Contract uses this function to store the address of the TC Contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
+    This is the constructor which registers the address of the TC Contract and the owner of this contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
     
     The address of the TC Contract is on the [Dev page].
     
