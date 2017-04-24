@@ -80,19 +80,20 @@ For more details, you can look at the source code of the contract [TownCrier.sol
 To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing othan than sending queries, logging responses and cancelling queries.
 
 First, you need to annotate your contract with the version pragma:
-
-:::shell
+```
 pragma solidity ^0.4.9;
-
+```
+For [Mist] users, the current stable version of Mist only supports solidity ^0.4.8. 
 
 Second, you need to include in your contract source code the function declaration headers of the `TownCrier` Contract so that the application contract can call those functions with the address of the `TownCrier` Contract.
 
-:::shell
+
+```
 contract TownCrier {
     function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64);
     function cancel(uint64 requestId) public returns (bool);
 }
-
+```
 
 The `Application` Contract consists of a set of five basic components:
 
@@ -175,6 +176,7 @@ Then everything works much as in the `Application` Contract.
 
 You can take a look at [FlightInsurance.sol] for the complete `FlightInsurance` Contract logic.
 
+[Mist]: https://github.com/ethereum/mist
 [Dev page]: http://www.town-crier.org/staging/dev.html
 [TownCrier.sol]: code/TownCrier.sol
 [Application.sol]: code/Application.sol
