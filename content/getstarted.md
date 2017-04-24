@@ -7,7 +7,7 @@ toc: yes
 Using Town Crier is simple.
 To obtain data from a target website, an application contract sends a query to the `TownCrier` Contract, which serves as a front end for TC.
 This query consists of the query type, which specifies what kind of data is requsted and the data source, i.e., a trusted website, and some query parameters, namely the specifics of the query to the website.
-For example, if the requesting contract is seeking for the a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically <https://finance.yahoo.com/> for this application in our TC implementation.
+For example, if the requesting contract is seeking for a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically <https://finance.yahoo.com/> for this application in our TC implementation.
 
 Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
 The processing of the query happens inside an SGX-protected environment known as an "enclave".
@@ -77,7 +77,7 @@ For more details, you can look at the source code of the contract [TownCrier.sol
 
 ### An application contract for general requesting and responding
 
-To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing othan than sending queries, logging responses and cancelling queries.
+To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing other than sending queries, logging responses and cancelling queries.
 
 First, you need to annotate your contract with the version pragma:
 ```
@@ -124,31 +124,55 @@ As you can see above, the `Application` Contract consists of a set of five basic
     This fallback function must be payable so that TC can provide a refund under certain conditions.
     The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when TC refunds ether to it.
     In our contract, it simply does nothing.
-```
+	```
 	function() public payable {}
-```
+	```
     
 * `function Application(TownCrier tc) public;`
     
     This is the constructor which registers the address of the TC Contract and the owner of this contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
     
-```
+	```
 	TownCrier public TC_CONTRACT;
 	address owner; // creator of this contract
 
 	function Application(TownCrier tcCont) public {
-    	TC_CONTRACT = tcCont;
-    	owner = msg.sender;
+		TC_CONTRACT = tcCont;
+		owner = msg.sender;
 	}
-```
-The address of the TC Contract is on the [Dev page]. Our current deployment on the Ropsten Testnet (Revived Chain) is `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`.
+	```
+	The address of the TC Contract is on the [Dev page]. Our current deployment on the Ropsten Testnet (Revived Chain) is `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`.
     
-* `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
+* `function request(uint8 requestType, bytes32[] requestData) public payable;`
     
-    This line is to call `request()` in the TC Contract.
+    A user calls this function to send a request to the `Application` Contract. is to call `request()` in the TC Contract.
     `TC_CALLBACK_ADD` is the address of the fallback function. If this line is in the same contract as the callback function, then `TC_CALLBACK_ADD` could simply be replaced by `this`.
     `TC_CALLBACK_FID` should be hardcoded as the first 4 bytes of the hash of the callback function specification.
-    
+	```
+	function request(uint8 requestType, bytes32[] requestData) public payable {
+        if (msg.value < TC_FEE) {
+            if (!msg.sender.send(msg.value)) {
+                throw;
+            }
+            Request(-1, msg.sender, requestData.length, requestData);
+            return;
+        }
+
+        uint64 requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData);
+        if (requestId == 0) {
+            if (!msg.sender.send(msg.value)) { 
+                throw;
+            }
+            Request(-2, msg.sender, requestData.length, requestData);
+            return;
+        }
+        
+        requesters[requestId] = msg.sender;
+        fee[requestId] = msg.value;
+        Request(int64(requestId), msg.sender, requestData.length, requestData);
+    }
+	```
+	
     Developers need to be careful with the fee sent with the function call.
     TC requires at least <b>3e4</b> gas for all the operations other than forwarding the response to the `Application` Contract in `deliver()` function and the gas price is set as <b>5e10 wei</b>.
     So a requester should pay no less than <b>1.5e15 wei</b> for one query. Otherwise the `request` call will fail and the TC Contract will return 0 as `requestId`.
@@ -162,6 +186,24 @@ The address of the TC Contract is on the [Dev page]. Our current deployment on t
 
 	This is the function which will be called by the TC Contract to deliver the response from TC server.
     The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
+	```
+	function response(uint64 requestId, uint64 error, bytes32 respData) public {
+        if (msg.sender != address(TC_CONTRACT)) {
+            Response(-1, msg.sender, 0, 0); 
+            return;
+        }
+
+        address requester = requesters[requestId];
+        requesters[requestId] = 0;
+
+        if (error < 2) {
+            Response(int64(requestId), requester, error, uint(respData));
+        } else {
+            requester.send(fee[requestId]);
+            Response(int64(requestId), msg.sender, error, 0);
+        }
+    }
+	```
     
     Since the gas limit for sending a response back to the TC Contract is set as <b>3e6</b> by the Town Crier server, as mentioned above, the callback function should not consume more gas than this. Otherwise the callback function will run out of gas and fail.
     The TC service does not take responsibility for such failures, and treats queries that fail in this way as successfully responded to.
@@ -170,6 +212,31 @@ The address of the TC Contract is on the [Dev page]. Our current deployment on t
 * `TownCrier.cancel(requestId);`
 
 	This line is for cancellation, calling the `cancel()` function in the TC Contract.
+	```
+	function cancel(uint64 requestId) public {
+        if (requestId == 0 || requesters[requestId] != msg.sender) {
+            // If the requestId is invalid or the requester is not the message sender,
+            // cancellation fails.
+            Cancel(requestId, msg.sender, false);
+            return;
+        }
+
+        bool tcCancel = TC_CONTRACT.cancel(requestId); // calling cancel() in the TownCrier Contract
+        if (tcCancel) {
+            // Successfully cancels the request in the TownCrier Contract,
+            // then refund the requester with (fee - cancellation fee).
+            requesters[requestId] = 0;
+            if (!msg.sender.send(fee[requestId] - CANCELLATION_FEE)) {
+                Cancel(requestId, msg.sender, false);
+                throw;
+            }
+            Cancel(requestId, msg.sender, true);
+        } else {
+            // Cancellation in the TownCrier Contract fails.
+            Cancel (requestId, msg.sender, false);
+        }
+    }
+	```
     A developer must carefully set a cancelled flag for the request before refunding the requester in order to prevent reentrancy attacks.
 
 You can look at [Application.sol] for the complete `Application` Contract logic required to interface with TC.
@@ -188,7 +255,7 @@ Here we present a design for a flight insurance application that illustrates use
 
 #### Application setting
 
-Suppose Alice wants to stand up a flight insurance service in the form of a smart contract `FlightInsurance`.
+Suppose Alice wants to set up a flight insurance service in the form of a smart contract `FlightInsurance`.
 A user can buy a policy for her flight by sending money to the `FlightInsurance` Contract.
 `FlightInsurance` offers a payout to the user should her insured flight be delayed or cancelled.
 (Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.) 
