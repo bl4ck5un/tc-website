@@ -5,8 +5,8 @@ toc: yes
 
 # Locate the `TownCrier` Contract
 
-- Network:  Ropsten Testnet (Network Id: 3)
-- Address: `0xc3847c4de90b83cb3f6b1e004c9e6345e0b9fc27`
+- Network:  [Ropsten (Revived)] Testnet, instructions for syncing to the revived testnet chain can be found [here])
+- Address: `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`
 
 # Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for TownCrier enclave
 
@@ -141,7 +141,8 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 
 	There are only a few scrapers so applications TC can support are very limited. We look forward to your proposals and designing scrapers and applications for TC!
 
-
+[Ropsten (Revived)]: https://github.com/ethereum/ropsten/blob/master/revival.md
+[here]: https://github.com/ethereum/ropsten
 [Flight departure delay]: http://flightaware.com/
 [Steam exchange]: http://store.steampowered.com/
 [Stock ticker]: https://finance.yahoo.com/
