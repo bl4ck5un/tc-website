@@ -124,14 +124,14 @@ As you can see above, the `Application` Contract consists of a set of five basic
     This fallback function must be payable so that TC can provide a refund under certain conditions.
     The fallback function should not cost more than 2300 gas, otherwise it will run out of gas when TC refunds ether to it.
     In our contract, it simply does nothing.
-    ```
+```
     function() public payable {}
-    ```
+```
     
 * `function Application(TownCrier tc) public;`
     
     This is the constructor which registers the address of the TC Contract and the owner of this contract during creation so that it can call the `request()` and `cancel()` functions in the TC contract.
-    ```
+```
     TownCrier public TC_CONTRACT;
     address owner; // creator of this contract
 
@@ -139,7 +139,7 @@ As you can see above, the `Application` Contract consists of a set of five basic
         TC_CONTRACT = tcCont;
         owner = msg.sender;
     }
-    ```
+```
     The address of the TC Contract is on the [Dev page]. Our current deployment on the Ropsten Testnet (Revived Chain) is `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`.
     
 * `requestId = TownCrier.request.value(fee)(requestType, TC_CALLBACK_ADD, TC_CALLBACK_FID, 0, requestData);`
