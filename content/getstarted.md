@@ -291,47 +291,49 @@ The scraper returns the departure delay of a given flight according to <http://f
     - `delay > 0 && delay < 2147483643`: flight delay in seconds
     - `delay = 2147483643`: flight cancelled
 - **Javascript snippet** to send a request in `geth` console:
-	
-		::javascript
-	    instance.request.sendTransaction(1,
-            [0x464a4d3237330000000000000000000000000000000000000000000000000000,
-            0x0000000000000000000000000000000000000000000000000000000058efa404],
-            {from: eth.defaultAccount, value: 3e15, gas: 3e6});
-
-	To pad the departure time into 32 bytes automatically, you can use the following script:
-
-        ::javascript
-		function pad(n, width) {
-		    m = n.toString(16);
-    		return '0x' + new Array(width - m.length + 1).join('0') + m;
-		}
-
-		var requestType = 1;
-		var requestData = ["FJM273", pad(1492100100, 64)];
-    	instance.request.sendTransaction(requestType, requestData, 
+	- Option 1	
+		
+			::javascript
+			instance.request.sendTransaction(1,
+				[0x464a4d3237330000000000000000000000000000000000000000000000000000,
+				0x0000000000000000000000000000000000000000000000000000000058efa404],
 				{from: eth.defaultAccount, value: 3e15, gas: 3e6});
 
-	You may also modify the function `request()` of the application contract a little bit 
-	so that users don't have to deal with the encodings of request data:
+	- Option 2
+
+		The encoded parameters seem messy. 
+		You can use the following script to pad the departure time into 32 bytes automatically:
+
+			::javascript
+			function pad(n, width) {
+			    m = n.toString(16);
+    			return '0x' + new Array(width - m.length + 1).join('0') + m;
+			}
+
+    		instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)], 
+					{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+
+	- Option 3
+
+		You may also modify the function `request()` of the application contract a little bit 
+		so that users don't have to deal with the encodings of request data:
     
-		function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
-    	    bytes32[] memory requestData = new bytes32[](2);
-    	    requestData[0] = flightNumber;
-    	    requestData[1] = bytes32(flightTime);
-			
-			// The same as the original version follows...
-		}
+			function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
+    		    bytes32[] memory requestData = new bytes32[](2);
+    		    requestData[0] = flightNumber;
+    		    requestData[1] = bytes32(flightTime);
+				
+				// The same as the original version follows...
+			}
 
-	With the interface above, a user could simply make a request by the following script:
+		With the interface above, a user could simply make a request by the following script:
 		
-		::javascript
-	    instance.request.sendTransaction(1, "FJM273", 1492100100,
-            {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+			::javascript
+	    	instance.request.sendTransaction(1, "FJM273", 1492100100,
+        	    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
 	
-	Users can [watch events] `Request()` and `Response()` of the application contract to get assigned `requestId` and response from TC for a query.
+Users can [watch events] `Request()` and `Response()` of the application contract to get assigned `requestId` and response from TC for a query.
 	
-		
-
 ### A practical flight insurance contract
 
 The `Application` Contract above is only able to send queries to and receive responses from TC.
