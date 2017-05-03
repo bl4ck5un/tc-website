@@ -127,19 +127,19 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 ## Weather
 - To be filled
 
-# Features of Town Crier in the future
+# Future Town Crier features 
 
-* Respond with a delay
+* Preprogrammed response delays
 
-	Currently TC could only respond to a query immediately once discover it. The `FlightInsurance` Contract, for example, requires a user to send two separate transactions, calling `insure()` and `request()` respectively, for one query due to this limitation. If TC supports the feature of responding with a delay, a user could buy a policy a certain period ahead the departure time. And within this single transaction, he could use the parameter `timestamp` in the `request()` interface to ask TC not to fetch data from the website until it has come to the scheduled departure time. Only the flight state scraped then matters in this application.
+	Currently TC can only respond to a query immediately. This limitation meants that the `FlightInsurance` Contract, for example, requires two separate transactions---calls to its `Insure()` and `Request()` functions respectively---for a single user and policy. Once TC supports the feature of responding with a preprogrammed delay, the `FlightInsurance` Contract will be able to specify a future query time for a given flight by using the parameter `timestamp` in the `request()` interface for TC. With this usage, TC will fetch data from the target flight-information website only at the scheduled departure time, eliminating the need for a user to call `Request()` in the `FlightInsurance` Contract. 
 
-* Encrypted query
+* Sensitive-data management
 
-	In some applications such as the Steam Trade, a user's account and key is required to access the trade information on the website. Such sensitive data in query should be encrypted before sent to the contract. Currently TC could only process plain data but we expect to add this feature in the near future.
+	In some applications, TC must manage sensitive data beyond query parameters, such as user credentials. An example is the `SteamTrade` Contract described in the Town Crier paper. This contract allows users to buy and sell games from one another. It requires that TC have access to a user's account credentials in order to verify that ownership of a game has been transfered in the course of a  trade. In the near future, TC will be instrumented to perform secure management of credentials and other sensitive data. 
 
-* More websites to suppport
+* More websites
 
-	There are only a few scrapers so applications TC can support are very limited. We look forward to your proposals and designing scrapers and applications for TC!
+	In the current alpha version of TC, only a few scrapers are supported. We look forward to your ideas about what new scrapers and applications TC should support! 
 
 [Ropsten (Revived)]: https://github.com/ethereum/ropsten/blob/master/revival.md
 [here]: https://github.com/ethereum/ropsten
