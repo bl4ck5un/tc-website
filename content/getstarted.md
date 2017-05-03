@@ -353,15 +353,15 @@ Here we present a design for a flight insurance application that illustrates use
 
 #### Application setting
 
-Suppose Alice wants to set up a flight insurance service in the form of a smart contract `FlightInsurance`.
-A user can buy a policy for her flight by sending money to the `FlightInsurance` Contract.
-`FlightInsurance` offers a payout to the user should her insured flight be delayed or cancelled.
+Suppose Alice wants to set up a flight insurance service and creates a smart contract `FlightInsurance` for this purpose.
+A user can buy a policy for his flight from Alice by sending money to the `FlightInsurance` Contract.
+`FlightInsurance` offers a payout to the user should his insured flight be delayed or cancelled.
 (Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.)
 
 #### Problem with the `Application` Contract
 
 The `FlightInsurance` Contract contains the same five basic components found above in the `Application` Contract.
-However, we don't want to query TC immediately after a user, say Bob, purchases a policy. If we do so, this will result in one of two inappropriate cases.
+However, we don't want to query TC immediately after a user, say Bob, purchases a policy. If we do so, this will result in one of two bad cases.
 One is that Bob purchases a policy for a flight that has already been delayed or cancelled, which is unfair to Alice.
 The other is that Bob purchases a policy before the scheduled departure time of his flight so when the `FlightInsurance` Contract queries immediately, it will get response of "not delayed" since the flight hasn't yet left. This is unfair to Bob.
 
