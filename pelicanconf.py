@@ -34,6 +34,7 @@ MENU_LINKS = [
 ('Dev', 'dev.html'),
 ('Research', 'research.html'),
 ('FAQ', 'faq.html'),
+('About Us', 'about-us.html'),
 ]
 
 STATIC_PATHS = ['code',]
