@@ -102,11 +102,11 @@ To receive a response from TC, the requester need to specify the recipient contr
 Very importantly, TC requires that the recipient function to have the following signature:
 
 ```javascript
-function response(uint64 requestId, uint64 error, bytes32 respData) public;
+function FUNCTION_NAME(uint64 requestId, uint64 error, bytes32 respData) public;
 ```
 
 This is the function which will be called by the TC Contract to deliver the response from TC server.
-The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
+The specification for it should be hardcoded as `bytes4(sha3("FUNCTION_NAME(uint64,uint64,bytes32)"))` and is passed in as `callbackFID` when calling `request()` function of the TC Contract.
 
 The response includes `error` and `respData`.
 If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
