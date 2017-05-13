@@ -1,6 +1,7 @@
 Title: Getting Started
 Date: 2017-4-6
 toc: yes
+slug: get-started
 
 # Using Town Crier in Your Smart Contracts
 
@@ -320,7 +321,7 @@ Let's try to query for flight departure delays. Below is an excerpt of the [Dev 
     - `delay > 0 && delay < 2147483643`: flight delay in seconds
     - `delay = 2147483643`: flight cancelled
 
-The interface is straightforward to use, with the only caveat that 
+The interface is straightforward to use, with the only caveat that
 you must get the padding right.
 You have at least three options to pad parameters in `geth`.
 
@@ -371,7 +372,7 @@ instance.request.sendTransaction(1, "FJM273", 1492100100,
 ```
 
 Okay, by now you've successfully created a TC-aware smart contract.
-One last tip for debugging: 
+One last tip for debugging:
 you can [watch events] `Request()` and `Response()` of the application contract to get assigned `requestId` and response from TC for a query.
 
 # More Practical Examples
