@@ -2,85 +2,113 @@ Title: Get Started
 Date: 2017-4-6
 toc: yes
 
-# Get Started with Town Crier
+# Using Town Crier in your smart contracts
+
+There are two ways to conveniently use Town Crier in your smart contracts.
+
+## Option A: using SmartContract.com
+
+A quick way to get started with Town Crier is by connecting one of the data feeds it supports to your smart contract through SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose). It's an easy way to set up an authenticated cryptocurrency price feed from Town Crier to your smart contract in only a few minutes.
+
+We do ask that you define the method which Town Crier will be sending to as shown below, after which you should be all set to quickly set up a TC-backed oracle in the smartcontract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
+
+## Option B: interfacing with TC directly
+
+Interfacing with Town Crier is easy.
+To query one of the [supported data sources](dev.html), an application contract just needs to send a query to the `TownCrier` Contract, which lives on the [mainnet](XXX).
+
+A query consists of a _query type_, which specifies the data source to be queried and some _parameters_,
+along with a callback address to which the data feeds will be delivered.
+For example, if your contract is seeking for a stock quote on the Oracle Corporation, it can simply query with type `3` (i.e. the Yahoo! Finance) and parameter `ORCL` (i.e. the ticker). Supported data sources are listed [here](dev.html). Keep in mind that we're still actively adding more to the list.
+
+Once the query is processed by the TC server, the `TownCrier` Contract will deliver the datagram to the callback address specified in the request by sending an inter-contract message.
+
+For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#h5).
+
+# How does Town Crier work: A Big Picture
 
 <img class="ui medium centered image" src="theme/images/1.png"></img>
-
-
-Using Town Crier is simple.
-To obtain data from a target website, an application contract sends a query to the `TownCrier` Contract, which serves as a front end for TC.
-This query consists of the query type, which specifies what kind of data is requsted and the data source, i.e., a trusted website, and some query parameters, namely the specifics of the query to the website.
-For example, if the requesting contract is seeking for a stock quote on Oracle Corporation, it might specify that it wants the result of sending ticker 'ORCL' to a trusted website for stock quotes, specifically <https://finance.yahoo.com/> for this application in our TC implementation.
 
 Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
 The processing of the query happens inside an SGX-protected environment known as an "enclave".
 The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
 SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network.
-<!-- figure for data flow -->
 
 <img class="ui medium centered image" src="theme/images/2.png"></img>
 
 Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handle <i> secret query data </i>.
 For example, a query could include a password used to log into a server or secret trading data.
-TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else). <!-- TBD -->
+TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
 
-## Understand the `TownCrier` Contract
+# Step-by-step: Developing Your First TC-aware Contract
 
-The `TownCrier` contract provides a uniform interface for queries from and replies to an application contract, which we also refer to as a "Requester".
-This interface consists of the following three functions.
+## Understand the interface: Town Crier
 
-* `request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint256 timestamp, bytes32[] requestData) public payable returns(uint64);`
+To use TC, you'll need two functions exposed by the `TownCrier` contract.
 
-	An application contract sends queries to TC by calling function `request()`, and it needs to send the following parameters.
+### Sending a request: `request`
 
-    - `requestType`: indicates the query type. You can find the query types and respective formats that Town Crier currently
-    supports on the [Dev page].
+```javascript
+request(uint8 requestType, address callbackAddr, \
+        bytes4 callbackFID, uint256 timestamp, \
+        bytes32[] requestData) public payable returns(uint64);
+```
 
-    - `callbackAddr`: the address of the application contract to which the response from Town Crier is forwarded.
+An application contract sends queries to TC by calling function `request()` with following parameters.
 
-    - `callbackFID`: specifies the callback function in the application contract to receive the response from TC.
+- `requestType`: indicates the query type. Should be one of the [supported query types](dev.html).
+- `callbackAddr`: the address of the recipient contract.
+- `callbackFID`: the callback function selector.
+- `timestamp`: reserved. Unused for now.
+- `requestData`: data specifying query parameters. The format depends on the query type.
 
-    - `timestamp`: currently unused parameter. This parameter will be used in a future feature.
-    Currently TC only responds to requests immediately.
-    Eventually TC will support requests with a future query time pre-specified by `timestamp`.
-    At present, developers can ignore this parameter and just set it to 0.
+Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. `msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
 
-    - `requestData`: data specifying query parameters.
-    The format depends on the query type.
 
-    When the `request` function is called, a request is logged by event `RequestInfo()`.
-    The function returns a `requestId` that is uniquely assigned to this request.
-    The application contract can use the `requestId` to check the response or status of a request in its logs.
-    The Town Crier server watches events and processes a request once logged by `RequestInfo()`.
 
-    Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract.
-    `msg.value` is the amount of wei a requester pays and is recorded as `Request.fee`.
+<!--
+```javascript
+deliver(uint64 requestId, bytes32 paramsHash, \
+        uint64 error, bytes32 respData) public;
+```
 
-* `deliver(uint64 requestId, bytes32 paramsHash, uing64 error, bytes32 respData) public;`
+After fetching data and generating the response for the request with `requestId`, TC sends a transaction calling function `deliver()`.
+`deliver()` verifies that the function call is made by SGX and that the hash of query parameters is correct.
+Then it calls the callback function of the application contract to transmit the response.
 
-    After fetching data and generating the response for the request with `requestId`, TC sends a transaction calling function `deliver()`.
-    `deliver()` verifies that the function call is made by SGX and that the hash of query parameters is correct.
-    Then it calls the callback function of the application contract to transmit the response.
+The response includes `error` and `respData`.
+If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
+The fee paid by the application contract for the request is consumed by TC.
+If `error = 1`, the application contract request is invalid or cannot be found on the website.
+In this case, similarly, the fee is consumed by TC.
+If `error > 1`, then an error has occured in the Town Crier server.
+In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
+-->
 
-    The response includes `error` and `respData`.
-    If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
-    The fee paid by the application contract for the request is consumed by TC.
-    If `error = 1`, the application contract request is invalid or cannot be found on the website.
-    In this case, similarly, the fee is consumed by TC.
-    If `error > 1`, then an error has occured in the Town Crier server.
-    In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
+### Canceling a request: `cancel`
 
-* `cancel(uint64 requestId) public returns(bool);`
+```javascript
+cancel(uint64 requestId) public returns(bool);
+```
 
-    A requester can cancel a request whose response has not yet been issued by calling function `cancel()`.
-    `requestId` is required to specify the query.
-    The fee paid by the Appliciation Contract is then refunded (minus processing costs, denoted as cancellation fee).
+Unprocessed requests can be canceled by calling function `cancel(requestId)`.
+The fee paid by the requester is then refunded (minus processing costs, denoted as cancellation fee).
 
-For more details, you can look at the source code of the contract [TownCrier.sol].
+For more details about how Town Crier contract works, you can look at the source code of the contract [TownCrier.sol].
 
-## Reference Application Contract for TC
+### Receiving a response
 
-### An application contract for general requesting and responding
+To receive a response from TC, the requester need to specify the recipient contract as well as the recipient interface.
+Very importantly, TC requires that the recipient function to have the following signature:
+
+```javascript
+function response(uint64 requestId, uint64 error, bytes32 respData) public;
+```
+
+This is the function which will be called by the TC Contract to deliver the response from TC server.
+The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
+
+## An example contract
 
 To show how to interface with the `TownCrier` Contract, we present a skeleton `Application` Contract that does nothing other than sending queries, logging responses and cancelling queries.
 
@@ -258,29 +286,18 @@ As you can see above, the `Application` Contract consists of a set of five basic
 
 You can look at [Application.sol] for the complete `Application` Contract logic required to interface with TC.
 
-### Deploying the application contract and testing
+## Send some queries!
 
+Let's actually send some queries from the `Application` contract TC.
+To begin with, you need to deploy the contract to testnet (or main net).
 [Ethereum greeter tutorial] provides thorough introduction to installing the solidity compiler and deploying smart contracts.
-Here are the basic `javascript` commands for deployment in `geth` console:
+Here assume you already deployed the contract and has an instance of it called `instance`:
 
-	::javascript
-	var source = `pragma solidity ^0.4.9; contract TownCrier { function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (uint64); function cancel(uint64 requestId) public returns (bool); } contract Application { event Request(int64 requestId, address requester, uint dataLength, bytes32[] data); // log for requests event Response(int64 requestId, address requester, uint64 error, uint data); // log for responses event Cancel(uint64 requestId, address requester, bool success); // log for cancellations uint constant MIN_GAS = 30000 + 20000; // minimum gas required for a query uint constant GAS_PRICE = 5 * 10 ** 10; uint constant TC_FEE = MIN_GAS * GAS_PRICE; uint constant CANCELLATION_FEE = 25000 * GAS_PRICE; bytes4 constant TC_CALLBACK_FID = bytes4(sha3("response(uint64,uint64,bytes32)")); TownCrier public TC_CONTRACT; address owner; // creator of this contract address[2**64] requesters; uint[2**64] fee; function() public payable {} // must be payable function Application(TownCrier tcCont) public { TC_CONTRACT = tcCont; // storing the address of the TownCrier Contract owner = msg.sender; } function request(uint8 requestType, bytes32[] requestData) public payable { if (msg.value < TC_FEE) { // The requester paid less fee than required. // Reject the request and refund the requester. if (!msg.sender.send(msg.value)) { throw; } Request(-1, msg.sender, requestData.length, requestData); return; } uint64 requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData); // calling request() in the TownCrier Contract if (requestId == 0) { // The request fails. // Refund the requester. if (!msg.sender.send(msg.value)) { throw; } Request(-2, msg.sender, requestData.length, requestData); return; } // Successfully sent a request to TC. // Record the request. requesters[requestId] = msg.sender; fee[requestId] = msg.value; Request(int64(requestId), msg.sender, requestData.length, requestData); } function response(uint64 requestId, uint64 error, bytes32 respData) public { if (msg.sender != address(TC_CONTRACT)) { // If the message sender is not the TownCrier Contract, // discard the response. Response(-1, msg.sender, 0, 0); return; } address requester = requesters[requestId]; requesters[requestId] = 0; // set the request as responded if (error < 2) { Response(int64(requestId), requester, error, uint(respData)); } else { requester.send(fee[requestId]); // refund the requester if error exists in TC Response(int64(requestId), msg.sender, error, 0); } } function cancel(uint64 requestId) public { if (requestId == 0 || requesters[requestId] != msg.sender) { // If the requestId is invalid or the requester is not the message sender, // cancellation fails. Cancel(requestId, msg.sender, false); return; } bool tcCancel = TC_CONTRACT.cancel(requestId); // calling cancel() in the TownCrier Contract if (tcCancel) { // Successfully cancels the request in the TownCrier Contract, // then refund the requester with (fee - cancellation fee). requesters[requestId] = 0; if (!msg.sender.send(fee[requestId] - CANCELLATION_FEE)) { Cancel(requestId, msg.sender, false); throw; } Cancel(requestId, msg.sender, true); } else { // Cancellation in the TownCrier Contract fails. Cancel (requestId, msg.sender, false); } } } `;
-	var compiled = eth.compile.solidity(source)
-	var contract = eth.contract(compiled["<stdin>:Application"].info.abiDefinition)
-	var instance = contract.new('0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27',
-					{from: eth.defaultAccount, data: compiled["<stdin>:Application"].code, gas: 3e6},
-					function(e, c) {
-						if (!e) {
-							if (c.address) console.log('Application created at: ' + c.address);
-						} else console.log('Failed to create Application contract: ' + e)};
-					});
+```javascript
+var instance = contract.at('0xdeadbeef');
+```
 
-Let's take `requestType 1` for flight departure delay as an example to see how user could make a request to the application contract.
-For other request types and formats, you can look at [Dev page].
-
-#### Flight Departure Delay
-
-The scraper returns the departure delay of a given flight according to <http://flightaware.com/>.
+Let's try to query for flight departure delays. Below is an excerpt of the [Dev page]:
 
 - **Input to TC** (64 bytes):
     1. flight number
@@ -295,86 +312,68 @@ The scraper returns the departure delay of a given flight according to <http://f
     - `delay = 0`: flight not departed yet or not delayed
     - `delay > 0 && delay < 2147483643`: flight delay in seconds
     - `delay = 2147483643`: flight cancelled
-- **Javascript snippet** to send a request in `geth` console:
-	- Option 1
 
-			::javascript
-			instance.request.sendTransaction(1,
-				[0x464a4d3237330000000000000000000000000000000000000000000000000000,
-				0x0000000000000000000000000000000000000000000000000000000058efa404],
-				{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+The interface is straightforward to use, with the only caveat that 
+you must get the padding right.
+You have at least three options to pad parameters in `geth`.
 
-	- Option 2
+**Option 1: do it mannually!**
 
-		The encoded parameters seem messy.
-		You can use the following script to pad the departure time into 32 bytes automatically:
+```javascript
+instance.request.sendTransaction(1,
+    [0x464a4d3237330000000000000000000000000000000000000000000000000000,
+    0x0000000000000000000000000000000000000000000000000000000058efa404],
+    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+```
 
-			::javascript
-			function pad(n, width) {
-			    m = n.toString(16);
-    			return '0x' + new Array(width - m.length + 1).join('0') + m;
-			}
+**Option 2: write a helper function**
 
-    		instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
-					{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+The encoded parameters seem messy.
+You can use the following script to pad the departure time into 32 bytes automatically:
 
-	- Option 3
+```
+function pad(n, width) {
+    m = n.toString(16);
+		return '0x' + new Array(width - m.length + 1).join('0') + m;
+}
 
-		You may also modify the function `request()` of the application contract a little bit
-		so that users don't have to deal with the encodings of request data:
+	instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
+		{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+```
 
-			function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
-    		    bytes32[] memory requestData = new bytes32[](2);
-    		    requestData[0] = flightNumber;
-    		    requestData[1] = bytes32(flightTime);
+**Option 3: let `geth` deal with it**
 
-				// The same as the original version follows...
-			}
+You may also modify the function `request()` of the application contract a little bit
+so that users don't have to deal with the encodings of request data:
 
-		With the interface above, a user could simply make a request by the following script:
+```javascript
+	function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
+		    bytes32[] memory requestData = new bytes32[](2);
+		    requestData[0] = flightNumber;
+		    requestData[1] = bytes32(flightTime);
 
-			::javascript
-	    	instance.request.sendTransaction(1, "FJM273", 1492100100,
-        	    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+		// The same as the original version follows...
+	}
+```
 
-Users can [watch events] `Request()` and `Response()` of the application contract to get assigned `requestId` and response from TC for a query.
+With the interface above, a user could simply make a request by the following script:
 
-### A practical flight insurance contract
+```javascript
+  	instance.request.sendTransaction(1, "FJM273", 1492100100,
+    	    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+```
 
-The `Application` Contract above is only able to send queries to and receive responses from TC.
-For many real-life applications there is one critical factor missing: <b>timing</b>.
-A stock exchange contract which settles at a specified time needs to know the stock quote for that time.
-A trip insurance contract which needs to find out whether a flight departs on time must fetch the flight state after the scheduled departure time.
-A contract for the sale of a physical good has to wait for a period for delivery after payment to check whether the good was successfully delivered.
-The immediate response TC currently supports cannot directly fulfill such requirements in these applications, but
-developers can use other strategies to get around this limitation. (Future versions of TC will allow for pre-specified, future query times using the `timestamp` parameter.)
+Okay, by now you've successfully created a TC-aware smart contract.
+One last tip for debugging: 
+you can [watch events] `Request()` and `Response()` of the application contract to get assigned `requestId` and response from TC for a query.
 
-Here we present a design for a flight insurance application that illustrates use of the full existing range of TC features.
+# More Practical Examples
 
-#### Application setting
+While the above example demonstrates the basic usage of TC, it is of limited
+capability. We've also developed several other full-blown examples to showcase
+the power of TC.
+You can read more [here](XXX).
 
-Suppose Alice wants to set up a flight insurance service and creates a smart contract `FlightInsurance` for this purpose.
-A user can buy a policy for his flight from Alice by sending money to the `FlightInsurance` Contract.
-`FlightInsurance` offers a payout to the user should his insured flight be delayed or cancelled.
-(Unfortunately, TC cannot detect whether you've been senselessly beaten and dragged off your flight by United Airlines.)
-
-#### Problem with the `Application` Contract
-
-The `FlightInsurance` Contract contains the same five basic components found above in the `Application` Contract.
-However, we don't want to query TC immediately after a user, say Bob, purchases a policy. If we do so, this will result in one of two bad cases.
-One is that Bob purchases a policy for a flight that has already been delayed or cancelled, which is unfair to Alice.
-The other is that Bob purchases a policy before the scheduled departure time of his flight so when the `FlightInsurance` Contract queries immediately, it will get response of "not delayed" since the flight hasn't yet left. This is unfair to Bob.
-
-#### A scheme to get around the problem
-
-To address this problem, we can separate the two operations and deal with them at different times.
-The `FlightInsurance` Contract needs to include a `Insure()` function for a user to buy a policy for his flight a certain period ahead of the scheduled departure time, say 24 hours.
-The contract can simply compare `block.timestamp` with the flight data to guarantee this restriction.
-If the request is valid, then the contract will store the flight data and issue a policy ID to the user for querying TC later.
-When the flight departs, the user can send a transaction to `Request()` with the policy ID in the `FlightInsurance` Contract, and the contract will query TC.
-Then everything works much as in the `Application` Contract.
-
-You can take a look at [FlightInsurance.sol] for the complete `FlightInsurance` Contract logic.
 
 [Mist]: https://github.com/ethereum/mist
 [Dev page]: http://www.town-crier.org/staging/dev.html
