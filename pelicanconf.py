@@ -29,7 +29,7 @@ SOCIAL = (('You can add links in your config file', '#'),
 DEFAULT_PAGINATION = False
 
 MENU_LINKS = [
-('What is TC', 'what-is-tc.html'),
+('What is TC?', 'what-is-tc.html'),
 ('Get Started', 'get-started.html'),
 ('Dev', 'dev.html'),
 ('Research', 'research.html'),
