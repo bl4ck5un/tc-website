@@ -1,27 +1,27 @@
-Title: Get Started
+Title: Getting Started
 Date: 2017-4-6
 toc: yes
 
 # Using Town Crier in your smart contracts
 
-There are two ways to conveniently use Town Crier in your smart contracts.
+There are two convenient ways to use Town Crier in your smart contracts.
 
-## Option A: using SmartContract.com
+## Option A: Using SmartContract.com
 
-A quick way to get started with Town Crier is by connecting one of the data feeds it supports to your smart contract through SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose). It's an easy way to set up an authenticated cryptocurrency price feed from Town Crier to your smart contract in only a few minutes.
+SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose) is a nice, easy way to get started with Town Crier in just a few minutes. Today, this tool is only available for cryptocurrency prices.
 
-We do ask that you define the method which Town Crier will be sending to as shown below, after which you should be all set to quickly set up a TC-backed oracle in the smartcontract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
+We ask that you define the method which Town Crier will be sending to as shown below. You should then be all set to quickly set up a TC-backed oracle in the SmartContract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
 
-## Option B: interfacing with TC directly
+## Option B: Interfacing with TC directly
 
-Interfacing with Town Crier is easy.
+Interfacing directly with Town Crier requires a little more work, but is also straightforward, and gives access to all of TC's currently supported set of data types.
 To query one of the [supported data sources](dev.html), an application contract just needs to send a query to the `TownCrier` Contract, which lives on the [mainnet](XXX).
 
 A query consists of a _query type_, which specifies the data source to be queried and some _parameters_,
 along with a callback address to which the data feeds will be delivered.
 For example, if your contract is seeking for a stock quote on the Oracle Corporation, it can simply query with type `3` (i.e. the Yahoo! Finance) and parameter `ORCL` (i.e. the ticker). Supported data sources are listed [here](dev.html). Keep in mind that we're still actively adding more to the list.
 
-Once the query is processed by the TC server, the `TownCrier` Contract will deliver the datagram to the callback address specified in the request by sending an inter-contract message.
+Once the query is processed by the TC server, the `TownCrier` Contract will deliver the resulting data to the callback address specified in the request. It does this by sending an inter-contract message.
 
 For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#h5).
 
@@ -30,7 +30,7 @@ For an end-to-end example, you can jump to [Step-by-step: Developing Your First 
 <img class="ui medium centered image" src="theme/images/1.png"></img>
 
 Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
-The processing of the query happens inside an SGX-protected environment known as an "enclave".
+Query processing happens inside an SGX-protected environment known as an "enclave".
 The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
 SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network.
 
