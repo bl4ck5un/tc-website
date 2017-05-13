@@ -62,6 +62,11 @@ An application contract sends queries to TC by calling function `request()` with
 - `timestamp`: reserved. Unused for now.
 - `requestData`: data specifying query parameters. The format depends on the query type.
 
+When the `request` function is called, a request is logged by event `RequestInfo()`.
+The function returns a `requestId` that is uniquely assigned to this request.
+The application contract can use the `requestId` to check the response or status of a request in its logs.
+The Town Crier server watches events and processes a request once logged by `RequestInfo()`.
+
 Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. `msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
 
 
@@ -76,13 +81,7 @@ After fetching data and generating the response for the request with `requestId`
 `deliver()` verifies that the function call is made by SGX and that the hash of query parameters is correct.
 Then it calls the callback function of the application contract to transmit the response.
 
-The response includes `error` and `respData`.
-If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
-The fee paid by the application contract for the request is consumed by TC.
-If `error = 1`, the application contract request is invalid or cannot be found on the website.
-In this case, similarly, the fee is consumed by TC.
-If `error > 1`, then an error has occured in the Town Crier server.
-In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
+
 -->
 
 ### Canceling a request: `cancel`
@@ -107,6 +106,14 @@ function response(uint64 requestId, uint64 error, bytes32 respData) public;
 
 This is the function which will be called by the TC Contract to deliver the response from TC server.
 The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
+
+The response includes `error` and `respData`.
+If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
+The fee paid by the application contract for the request is consumed by TC.
+If `error = 1`, the application contract request is invalid or cannot be found on the website.
+In this case, similarly, the fee is consumed by TC.
+If `error > 1`, then an error has occured in the Town Crier server.
+In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
 
 ## An example contract
 
@@ -334,11 +341,11 @@ You can use the following script to pad the departure time into 32 bytes automat
 ```
 function pad(n, width) {
     m = n.toString(16);
-		return '0x' + new Array(width - m.length + 1).join('0') + m;
+    return '0x' + new Array(width - m.length + 1).join('0') + m;
 }
 
-	instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
-		{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
+	{from: eth.defaultAccount, value: 3e15, gas: 3e6});
 ```
 
 **Option 3: let `geth` deal with it**
@@ -347,20 +354,20 @@ You may also modify the function `request()` of the application contract a littl
 so that users don't have to deal with the encodings of request data:
 
 ```javascript
-	function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
-		    bytes32[] memory requestData = new bytes32[](2);
-		    requestData[0] = flightNumber;
-		    requestData[1] = bytes32(flightTime);
+function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
+	bytes32[] memory requestData = new bytes32[](2);
+	requestData[0] = flightNumber;
+	requestData[1] = bytes32(flightTime);
 
-		// The same as the original version follows...
-	}
+	// The same as the original version follows...
+}
 ```
 
 With the interface above, a user could simply make a request by the following script:
 
 ```javascript
-  	instance.request.sendTransaction(1, "FJM273", 1492100100,
-    	    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+instance.request.sendTransaction(1, "FJM273", 1492100100,
+	{from: eth.defaultAccount, value: 3e15, gas: 3e6});
 ```
 
 Okay, by now you've successfully created a TC-aware smart contract.
