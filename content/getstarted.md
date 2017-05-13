@@ -1,36 +1,36 @@
-Title: Get Started
+Title: Getting Started
 Date: 2017-4-6
 toc: yes
 
-# Using Town Crier in your smart contracts
+# Using Town Crier in Your Smart Contracts
 
-There are two ways to conveniently use Town Crier in your smart contracts.
+There are two convenient ways to use Town Crier in your smart contracts.
 
-## Option A: using SmartContract.com
+## Option A: Using SmartContract.com
 
-A quick way to get started with Town Crier is by connecting one of the data feeds it supports to your smart contract through SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose). It's an easy way to set up an authenticated cryptocurrency price feed from Town Crier to your smart contract in only a few minutes.
+SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose) is a nice, easy way to get started with Town Crier in just a few minutes. Today, this tool is only available for cryptocurrency prices.
 
-We do ask that you define the method which Town Crier will be sending to as shown below, after which you should be all set to quickly set up a TC-backed oracle in the smartcontract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
+We ask that you define the method which Town Crier will be sending to as shown below. You should then be all set to quickly set up a TC-backed oracle in the SmartContract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
 
-## Option B: interfacing with TC directly
+## Option B: Interfacing with TC directly
 
-Interfacing with Town Crier is easy.
+Interfacing directly with Town Crier requires a little more work, but is also straightforward, and gives access to all of TC's currently supported set of data types.
 To query one of the [supported data sources](dev.html), an application contract just needs to send a query to the `TownCrier` Contract, which lives on the [mainnet](XXX).
 
 A query consists of a _query type_, which specifies the data source to be queried and some _parameters_,
 along with a callback address to which the data feeds will be delivered.
 For example, if your contract is seeking for a stock quote on the Oracle Corporation, it can simply query with type `3` (i.e. the Yahoo! Finance) and parameter `ORCL` (i.e. the ticker). Supported data sources are listed [here](dev.html). Keep in mind that we're still actively adding more to the list.
 
-Once the query is processed by the TC server, the `TownCrier` Contract will deliver the datagram to the callback address specified in the request by sending an inter-contract message.
+Once the query is processed by the TC server, the `TownCrier` Contract will deliver the resulting data to the callback address specified in the request. It does this by sending an inter-contract message.
 
 For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#h5).
 
-# How does Town Crier work: A Big Picture
+# How Town Crier Works: The Big Picture
 
 <img class="ui medium centered image" src="theme/images/1.png"></img>
 
 Behind the scenes, when it receives a query from an application contract, the TC server fetches the requested data from the website and relays it back to the requesting contract.
-The processing of the query happens inside an SGX-protected environment known as an "enclave".
+Query processing happens inside an SGX-protected environment known as an "enclave".
 The requested data is fetched via a TLS connection to the target website that terminates inside the enclave.
 SGX protections prevent even the operator of the server from peeking into the enclave or modifying its behavior, while use of TLS prevents tampering or eavesdropping on communications on the network.
 
@@ -40,9 +40,9 @@ Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handl
 For example, a query could include a password used to log into a server or secret trading data.
 TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
 
-# Step-by-step: Developing Your First TC-aware Contract
+# Step-by-Step: Developing Your First TC-Aware Contract
 
-## Understand the interface: Town Crier
+## The TC interface
 
 To use TC, you'll need two functions exposed by the `TownCrier` contract.
 
@@ -62,6 +62,11 @@ An application contract sends queries to TC by calling function `request()` with
 - `timestamp`: reserved. Unused for now.
 - `requestData`: data specifying query parameters. The format depends on the query type.
 
+When the `request` function is called, a request is logged by event `RequestInfo()`.
+The function returns a `requestId` that is uniquely assigned to this request.
+The application contract can use the `requestId` to check the response or status of a request in its logs.
+The Town Crier server watches events and processes a request once logged by `RequestInfo()`.
+
 Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. `msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
 
 
@@ -76,13 +81,7 @@ After fetching data and generating the response for the request with `requestId`
 `deliver()` verifies that the function call is made by SGX and that the hash of query parameters is correct.
 Then it calls the callback function of the application contract to transmit the response.
 
-The response includes `error` and `respData`.
-If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
-The fee paid by the application contract for the request is consumed by TC.
-If `error = 1`, the application contract request is invalid or cannot be found on the website.
-In this case, similarly, the fee is consumed by TC.
-If `error > 1`, then an error has occured in the Town Crier server.
-In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
+
 -->
 
 ### Canceling a request: `cancel`
@@ -107,6 +106,14 @@ function response(uint64 requestId, uint64 error, bytes32 respData) public;
 
 This is the function which will be called by the TC Contract to deliver the response from TC server.
 The specification `TC_CALLBACK_FID` for it should be hardcoded as `bytes4(sha3("response(uint64,uint64,bytes32)"))`.
+
+The response includes `error` and `respData`.
+If `error = 0`, the application contract request has been successfully processed and the application contract can then safely use `respData`.
+The fee paid by the application contract for the request is consumed by TC.
+If `error = 1`, the application contract request is invalid or cannot be found on the website.
+In this case, similarly, the fee is consumed by TC.
+If `error > 1`, then an error has occured in the Town Crier server.
+In this case, the fee is fully refunded but the transaction cost for requesting by the application contract won't be compensated.
 
 ## An example contract
 
@@ -334,11 +341,11 @@ You can use the following script to pad the departure time into 32 bytes automat
 ```
 function pad(n, width) {
     m = n.toString(16);
-		return '0x' + new Array(width - m.length + 1).join('0') + m;
+    return '0x' + new Array(width - m.length + 1).join('0') + m;
 }
 
-	instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
-		{from: eth.defaultAccount, value: 3e15, gas: 3e6});
+instance.request.sendTransaction(1, ["FJM273", pad(1492100100, 64)],
+	{from: eth.defaultAccount, value: 3e15, gas: 3e6});
 ```
 
 **Option 3: let `geth` deal with it**
@@ -347,20 +354,20 @@ You may also modify the function `request()` of the application contract a littl
 so that users don't have to deal with the encodings of request data:
 
 ```javascript
-	function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
-		    bytes32[] memory requestData = new bytes32[](2);
-		    requestData[0] = flightNumber;
-		    requestData[1] = bytes32(flightTime);
+function request(uint8 requestType, bytes32 flightNumber, uint flightTime) public payable {
+	bytes32[] memory requestData = new bytes32[](2);
+	requestData[0] = flightNumber;
+	requestData[1] = bytes32(flightTime);
 
-		// The same as the original version follows...
-	}
+	// The same as the original version follows...
+}
 ```
 
 With the interface above, a user could simply make a request by the following script:
 
 ```javascript
-  	instance.request.sendTransaction(1, "FJM273", 1492100100,
-    	    {from: eth.defaultAccount, value: 3e15, gas: 3e6});
+instance.request.sendTransaction(1, "FJM273", 1492100100,
+	{from: eth.defaultAccount, value: 3e15, gas: 3e6});
 ```
 
 Okay, by now you've successfully created a TC-aware smart contract.
