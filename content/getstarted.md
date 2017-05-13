@@ -2,7 +2,7 @@ Title: Getting Started
 Date: 2017-4-6
 toc: yes
 
-# Using Town Crier in your smart contracts
+# Using Town Crier in Your Smart Contracts
 
 There are two convenient ways to use Town Crier in your smart contracts.
 
@@ -25,7 +25,7 @@ Once the query is processed by the TC server, the `TownCrier` Contract will deli
 
 For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#h5).
 
-# How does Town Crier work: A Big Picture
+# How Town Crier Works: The Big Picture
 
 <img class="ui medium centered image" src="theme/images/1.png"></img>
 
@@ -40,9 +40,9 @@ Town Crier can optionally ingest an <i>encrypted</i> query, allowing it to handl
 For example, a query could include a password used to log into a server or secret trading data.
 TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
 
-# Step-by-step: Developing Your First TC-aware Contract
+# Step-by-Step: Developing Your First TC-Aware Contract
 
-## Understand the interface: Town Crier
+## The TC interface
 
 To use TC, you'll need two functions exposed by the `TownCrier` contract.
 
