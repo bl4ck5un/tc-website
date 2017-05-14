@@ -26,6 +26,7 @@ toc: yes
 | 4 | [UPS tracking] | tracking number | State of the package | API not stable |
 | 5 | [Coin market price] | Cryptocurrency name | Current exchange rate | <i class="checkmark icon"></i> |
 | 6 | [Weather] |
+| 16 | (Confidential) [Flight departure delay] | encrypted flight info | flight delay | <i class="checkmark icon"></i> |
 
 # Query interfaces
 
