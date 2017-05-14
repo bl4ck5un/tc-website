@@ -8,7 +8,7 @@ toc: yes
 - Network:  [Ropsten (Revived)] Testnet, instructions for syncing to the revived testnet chain can be found [here])
 - Address: `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`
 
-# Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for TownCrier enclave
+# Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for Town Crier enclave
 
     :::shell
     $ curl -d '{"id": 123, "jsonrpc": "2.0", "method": "attest"}' \
