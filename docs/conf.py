@@ -82,7 +82,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'default'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -126,7 +126,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'TownCrier.tex', u'Town Crier: an Authenticated Data Feed for Smart Contracts Documentation',
+    (master_doc, 'TownCrier.tex', u'Town Crier',
      u'Fan Zhang', 'manual'),
 ]
 
@@ -136,7 +136,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'towncrier', u'Town Crier: an Authenticated Data Feed for Smart Contracts Documentation',
+    (master_doc, 'towncrier', u'Town Crier',
      [author], 1)
 ]
 
@@ -147,7 +147,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'TownCrier', u'Town Crier: an Authenticated Data Feed for Smart Contracts Documentation',
-     author, 'TownCrier', 'One line description of project.',
+    (master_doc, 'TownCrier', u'Town Crier: ',
+     author, 'TownCrier', 'An Authenticated Data Feed for Smart Contracts Documentation',
      'Miscellaneous'),
 ]
