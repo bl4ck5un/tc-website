@@ -12,7 +12,7 @@ Welcome to Town Crier's documentation!
 
    tc-contract
    flight-ins
-
+   confidential_api
 
 
 Indices and tables

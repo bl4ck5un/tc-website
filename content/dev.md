@@ -17,15 +17,22 @@ toc: yes
 
 # Town Crier Scrapers
 
+## Open API
+
 | Type | Data source | Request | Response | State |
 | ---- | ----------- | ------- | -------- | ----- |
 | 1 | [Flight departure delay] | Flight information | Flight delay | <i class="checkmark icon"></i> |
-| 2 | [Steam exchange] | || encrypted query not supported
 | 3 | [Stock ticker] | Stock symbol and date | Closing price | <i class="checkmark icon"></i> |
 | 4 | [UPS tracking] | tracking number | State of the package | API not stable |
-| 5 | [Coin market price] | Cryptocurrency name | Current exchange rate | <i class="checkmark icon"></i> |
-| 6 | [Weather] |
-| 16 | (Confidential) [Flight departure delay] | encrypted flight info | flight delay | <i class="checkmark icon"></i> |
+| 5 | [Coin market price] | Cryptocurrency name (e.g. 'bitcoin') | USD price | <i class="checkmark icon"></i> |
+| 6 | [Weather] | City name (e.g. 'Ithaca, NY') | temperature (F) | <i class="checkmark icon"></i> |
+
+## Confidential API
+
+| Type | Data source | Request | Response | State |
+| ---- | ----------- | ------- | -------- | ----- |
+| 16 | [Flight departure delay] | encrypted flight info | flight delay | <i class="lock icon"></i> |
+| 17 | [Steam Transaction] | Seller API key, buyer ID, item names | If a trade between seller and buyer happened | <i class="lock icon"></i>|
 
 # Query interfaces
 
@@ -127,24 +134,24 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 ## Weather
 - To be filled
 
-# Future Town Crier features 
+# Future Town Crier features
 
 * Preprogrammed response delays
 
-	Currently TC can only respond to a query immediately. This limitation meants that the `FlightInsurance` Contract, for example, requires two separate transactions---calls to its `Insure()` and `Request()` functions respectively---for a single user and policy. Once TC supports the feature of responding with a preprogrammed delay, the `FlightInsurance` Contract will be able to specify a future query time for a given flight by using the parameter `timestamp` in the `request()` interface for TC. With this usage, TC will fetch data from the target flight-information website only at the scheduled departure time, eliminating the need for a user to call `Request()` in the `FlightInsurance` Contract. 
+	Currently TC can only respond to a query immediately. This limitation meants that the `FlightInsurance` Contract, for example, requires two separate transactions---calls to its `Insure()` and `Request()` functions respectively---for a single user and policy. Once TC supports the feature of responding with a preprogrammed delay, the `FlightInsurance` Contract will be able to specify a future query time for a given flight by using the parameter `timestamp` in the `request()` interface for TC. With this usage, TC will fetch data from the target flight-information website only at the scheduled departure time, eliminating the need for a user to call `Request()` in the `FlightInsurance` Contract.
 
 * Sensitive-data management
 
-	In some applications, TC must manage sensitive data beyond query parameters, such as user credentials. An example is the `SteamTrade` Contract described in the Town Crier paper. This contract allows users to buy and sell games from one another. It requires that TC have access to a user's account credentials in order to verify that ownership of a game has been transfered in the course of a  trade. In the near future, TC will be instrumented to perform secure management of credentials and other sensitive data. 
+	In some applications, TC must manage sensitive data beyond query parameters, such as user credentials. An example is the `SteamTrade` Contract described in the Town Crier paper. This contract allows users to buy and sell games from one another. It requires that TC have access to a user's account credentials in order to verify that ownership of a game has been transfered in the course of a  trade. In the near future, TC will be instrumented to perform secure management of credentials and other sensitive data.
 
 * More websites
 
-	In the current alpha version of TC, only a few scrapers are supported. We look forward to your ideas about what new scrapers and applications TC should support! 
+	In the current alpha version of TC, only a few scrapers are supported. We look forward to your ideas about what new scrapers and applications TC should support!
 
 [Ropsten (Revived)]: https://github.com/ethereum/ropsten/blob/master/revival.md
 [here]: https://github.com/ethereum/ropsten
 [Flight departure delay]: http://flightaware.com/
-[Steam exchange]: http://store.steampowered.com/
+[Steam Transaction]: http://store.steampowered.com/
 [Stock ticker]: https://finance.yahoo.com/
 [UPS tracking]: https://www.ups.com/
 [Coin market price]: https://coinmarketcap.com/
