@@ -5,7 +5,7 @@ toc: yes
 
 # Locate the `TownCrier` Contract
 
-- Address: `0x4db40c052dd7e736d73dca3cbcc7f0d974a2ab59` ([mainnet](https://etherscan.io/address/0x4db40c052dd7e736d73dca3cbcc7f0d974a2ab59))
+- Address: `0x89c1b3807d4c67df034fffb62f3509561218d30b` ([mainnet](https://etherscan.io/address/0x4db40c052dd7e736d73dca3cbcc7f0d974a2ab59))
 
 # Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for Town Crier enclave
 
