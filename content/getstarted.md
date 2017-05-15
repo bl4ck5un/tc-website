@@ -11,7 +11,7 @@ There are two convenient ways to use Town Crier in your smart contracts.
 
 SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontract.com/#/choose) is a nice, easy way to get started with Town Crier in just a few minutes. Today, this tool is only available for cryptocurrency prices.
 
-We ask that you define the method which Town Crier will be sending to as shown below. You should then be all set to quickly set up a TC-backed oracle in the SmartContract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
+We ask that you define the method which Town Crier will be sending to as shown below. You should then be all set to quickly set up a TC-backed oracle in the SmartContract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://create.smartcontract.com/#/contracts/cc3ea3c76b5a60f171e0eaf223146f34?tab=info](https://create.smartcontract.com/#/contracts/cc3ea3c76b5a60f171e0eaf223146f34?tab=info).
 
 ### Writing a smart contract function to work with Town Crier:
 
@@ -74,7 +74,7 @@ An application contract sends queries to TC by calling function `request()` with
 - `timestamp`: reserved. Unused for now.
 - `requestData`: data specifying query parameters. The format depends on the query type.
 
-Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. 
+Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract.
 `msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
 
 When the `request` function is called, a request is logged by event `RequestInfo()`.
@@ -82,7 +82,7 @@ The function returns an `int256` value denoted as `requestId`.
 If `requestId > 0`, then this is the Id uniquely assigned to this request.
 The application contract can use the `requestId` to check the response or status of a request in its logs.
 If `requestId = -2^250`, then the request fails because the requester didn't send enough fee to the TC Contract.
-If `requestId = 0`, then the TC service is suspended due to some internal reason. 
+If `requestId = 0`, then the TC service is suspended due to some internal reason.
 No more requests or cancellations can be made but previous requests will still be responded to by TC.
 If `requestId < 0 && requestId != -2^250`, then the TC Contract is upgraded and requests should be sent to the new address `-requestId`.
 
