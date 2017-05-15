@@ -5,8 +5,7 @@ toc: yes
 
 # Locate the `TownCrier` Contract
 
-- Network:  [Ropsten (Revived)] Testnet, instructions for syncing to the revived testnet chain can be found [here])
-- Address: `0xC3847C4dE90B83CB3F6B1e004c9E6345e0b9fc27`
+- Address: `0x4db40c052dd7e736d73dca3cbcc7f0d974a2ab59` ([mainnet](https://etherscan.io/address/0x4db40c052dd7e736d73dca3cbcc7f0d974a2ab59))
 
 # Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for Town Crier enclave
 
@@ -31,8 +30,8 @@ toc: yes
 
 | Type | Data source | Request | Response | State |
 | ---- | ----------- | ------- | -------- | ----- |
-| 16 | [Flight departure delay] | encrypted flight info | flight delay | <i class="lock icon"></i> |
-| 17 | [Steam Transaction] | Seller API key, buyer ID, item names | If a trade between seller and buyer happened | <i class="lock icon"></i>|
+| 16 | [Flight departure delay] | encrypted flight info | flight delay | <i class="checkmark icon"></i><i class="lock icon"></i> |
+| 17 | [Steam Transaction] | See [doc][Conf. API] | If a trade between seller and buyer happened | <i class="checkmark icon"></i><i class="lock icon"></i>|
 
 # Query interfaces
 
@@ -156,3 +155,4 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 [UPS tracking]: https://www.ups.com/
 [Coin market price]: https://coinmarketcap.com/
 [Weather]: https://darksky.net
+[Conf. API]: https://town-crier.readthedocs.io/en/latest/confidential_api.html
