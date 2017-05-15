@@ -25,6 +25,7 @@ toc: yes
 | 4 | [UPS tracking] | tracking number | State of the package | API not stable |
 | 5 | [Coin market price] | Cryptocurrency name (e.g. 'bitcoin') | USD price | <i class="checkmark icon"></i> |
 | 6 | [Weather] | City name (e.g. 'Ithaca, NY') | temperature (F) | <i class="checkmark icon"></i> |
+| 9 | [WolframAlpha] | Simple query (e.g. 'population of usa') | results from Wolfram (e.g. 322 million people) | only support simple queries |
 
 ## Confidential API
 
@@ -156,3 +157,4 @@ This scraper returns the current exchange rate of the queried cryptocurrency in 
 [Coin market price]: https://coinmarketcap.com/
 [Weather]: https://darksky.net
 [Conf. API]: https://town-crier.readthedocs.io/en/latest/confidential_api.html
+[WolframAlpha]: https://www.wolframalpha.com/
