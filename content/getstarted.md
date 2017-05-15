@@ -63,7 +63,7 @@ To use TC, you'll need two functions exposed by the `TownCrier` contract.
 ```javascript
 request(uint8 requestType, address callbackAddr, \
         bytes4 callbackFID, uint256 timestamp, \
-        bytes32[] requestData) public payable returns(uint64);
+        bytes32[] requestData) public payable returns(int256);
 ```
 
 An application contract sends queries to TC by calling function `request()` with following parameters.
@@ -74,13 +74,19 @@ An application contract sends queries to TC by calling function `request()` with
 - `timestamp`: reserved. Unused for now.
 - `requestData`: data specifying query parameters. The format depends on the query type.
 
+Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. 
+`msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
+
 When the `request` function is called, a request is logged by event `RequestInfo()`.
-The function returns a `requestId` that is uniquely assigned to this request.
+The function returns an `int256` value denoted as `requestId`.
+If `requestId > 0`, then this is the Id uniquely assigned to this request.
 The application contract can use the `requestId` to check the response or status of a request in its logs.
+If `requestId = -2^250`, then the request fails because the requester didn't send enough fee to the TC Contract.
+If `requestId = 0`, then the TC service is suspended due to some internal reason. 
+No more requests or cancellations can be made but previous requests will still be responded to by TC.
+If `requestId < 0 && requestId != -2^250`, then the TC Contract is upgraded and requests should be sent to the new address `-requestId`.
+
 The Town Crier server watches events and processes a request once logged by `RequestInfo()`.
-
-Requesters must prepay the gas cost incurred by the Town Crier server in relaying a response to the application contract. `msg.value` is the amount of `wei` a requester pays and is recorded as `Request.fee`.
-
 
 
 <!--
@@ -220,7 +226,7 @@ As you can see above, the `Application` Contract consists of a set of five basic
 				return;
 			}
 
-			uint64 requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData);
+			int requestId = TC_CONTRACT.request.value(msg.value)(requestType, this, TC_CALLBACK_FID, 0, requestData);
 			if (requestId == 0) {
 				// If the TC Contract returns 0 indicating the request fails
 				// we should discard the request and return the ether.
@@ -230,8 +236,8 @@ As you can see above, the `Application` Contract consists of a set of five basic
 
 			// If the request succeeds,
 			// we should record the requester and how much fee he pays.
-			requesters[requestId] = msg.sender;
-			fee[requestId] = msg.value;
+			requesters[uint64(requestId)] = msg.sender;
+			fee[uint64(requestId)] = msg.value;
 			Request(int64(requestId), msg.sender, requestData.length, requestData);
 		}
 
