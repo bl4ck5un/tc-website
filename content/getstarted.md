@@ -13,6 +13,16 @@ SmartContract.com's [TC-backed-oracle creation tool](https://create.smartcontrac
 
 We ask that you define the method which Town Crier will be sending to as shown below. You should then be all set to quickly set up a TC-backed oracle in the SmartContract.com environment. Here is an example of what your Town Crier Oracle will look like when it goes live: [https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239](https://staging.smartcontract.com/#/contracts/4bd8ecf48f87bf423c5a7c82e327c239).
 
+### Writing a smart contract function to work with Town Crier:
+
+To receive a response from TC, the requester need to specify the recipient contract as well as the recipient interface. Very importantly, TC requires the recipient function to have the following signature:
+
+```javascript
+function FUNCTION_NAME(uint64 requestId, uint64 error, bytes32 respData) public;
+```
+
+This is the function which will be called by the TC Contract to deliver the response from TC server. The specification for it should be hardcoded as `bytes4(sha3("FUNCTION_NAME(uint64,uint64,bytes32)"))` and is passed in as `callbackFID` when calling `request()` function of the TC Contract. Details about how to test if your function is written correctly can be found [here](#callbackFID).
+
 ## Option B: Interfacing with TC directly
 
 Interfacing directly with Town Crier requires a little more work, but is also straightforward, and gives access to all of TC's currently supported set of data types.
@@ -24,7 +34,7 @@ For example, if your contract is seeking for a stock quote on the Oracle Corpora
 
 Once the query is processed by the TC server, the `TownCrier` Contract will deliver the resulting data to the callback address specified in the request. It does this by sending an inter-contract message.
 
-For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#h5).
+For an end-to-end example, you can jump to [Step-by-step: Developing Your First TC-aware Contract](#Step-by-Step).
 
 # How Town Crier Works: The Big Picture
 
@@ -42,6 +52,7 @@ For example, a query could include a password used to log into a server or secre
 TC's operation in an SGX enclave ensures that the password or trading data is concealed from the TC operator (and everyone else).
 
 # Step-by-Step: Developing Your First TC-Aware Contract
+<a name="Step-by-Step"></a>
 
 ## The TC interface
 
@@ -103,6 +114,7 @@ The fee paid by the requester is then refunded (minus processing costs, denoted 
 For more details about how Town Crier contract works, you can look at the source code of the contract [TownCrier.sol].
 
 ### Receiving a response
+<a name="callbackFID"></a>
 
 To receive a response from TC, the requester need to specify the recipient contract as well as the recipient interface.
 Very importantly, TC requires that the recipient function to have the following signature:
