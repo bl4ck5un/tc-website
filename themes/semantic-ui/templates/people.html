@@ -1,0 +1,80 @@
+{% extends 'article.html' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block meta_tags %}
+<meta property="og:title" content="{{ article.title }}" />
+<meta property="og:url" content="{{ article.url }}"/>
+<meta property="og:description" content=" {{ article.meta_description }}" />
+<meta property="og:type" content="article" />
+<meta property="og:author" content="{{ article.author }}" />
+{% endblock %}
+
+{% macro people_item(weburl, pic, name, title, bio, email) %}
+    <div class="item">
+        <div class="content">
+            <img class="left floated small ui image" src="http://www.initc3.org/images/people/{{ pic }}">
+            <div class="header" >{{ name }} </div>
+            <div class="meta">
+                {% if title %}
+                <span>{{ title }}</span>
+                {% endif %}
+                {% if email %}
+                <button class="ui mini compact basic icon button"><a href={{ "mailto:" + email }}><i class="mail icon"></i>Email</a></button>
+                {% endif %}
+                {% if weburl %}
+                <button class="ui mini compact basic icon button"><a href="{{ weburl }}"><i class="home icon"></i>Website</a></button>
+                {% endif %}
+            </div>
+            <div class="description"><p>{{ bio }}</p></div>
+            <div class="extra">
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block content %}
+<div class="ui text container center aligned article-top">
+    <h1 class="ui header article-huge">{{ article.title }}</h1>
+    {% if article.subtitle %}
+    <h3 class="ui header">{{ article.subtitle }}</h3>
+    <span class="ui author">by {{ article.author }} on {{ article.date.strftime('%d %B %Y')}}</span>
+    {% endif %}
+</div>
+
+<div class="ui text container tall stacked segment">
+    <div class="ui right attached rail tablet or lower hidden" style="min-height: 500px;">
+        <div class="ui sticky toc" id="toc"></div>
+    </div>
+
+    <h1>Contact the Team</h1>
+    <ul>
+      <li>Please submit bug reports or feature requests to Github <a class="github-button" href="https://github.com/bl4ck5un/Town-Crier/issues" data-icon="octicon-issue-opened" aria-label="Issue bl4ck5un/Town-Crier on GitHub">Issue</a></li>
+      <li>For general technical discussion, the team can be reached at <a href="mailto:dev@town-crier.org?subject=Hello">dev@town-crier.org</a></li>
+    </ul>
+    <p>
+    </p>
+
+    <h1>People</h1>
+
+    <div class="ui items">
+
+    {{ people_item('http://www.cs.cornell.edu/~fanz/', 'fan.jpg', 'Fan Zhang', '', 'Fan Zhang is a second year PhD student Cornell University. His research interest spans systems security, trusted hardware, cryptocurrencies and their intersection.', 'fanz@linux.com') }}
+
+    {{ people_item('', 'oscar.png', 'Oscar Zegarra', '', 'Oscar is a senior studying Computer Science and Physics at Cornell University. He is interested in applications of block chain technologies as well as distributed systems and programming languages.', '') }}
+
+    {{ people_item('', 'yanji.jpg', 'Yan Ji', '', 'Yan Ji is an undergraduate student from Shanghai Jiao Tong University and currently an intern at Cornell. She is interested in blockchain technologies and other areas intersecting security, applied cryptography and distributed systems.', '') }}
+
+    {{ people_item('http://www.cs.cornell.edu/~ethan/', 'ethan.png', 'Ethan Cecchetti', '', 'Ethan Cecchetti is a graduate student at Cornell University. He is interested in a wide range of research related to security and cryptography.', '') }}
+
+    {{ people_item('http://www.arijuels.com', 'ari2.jpg', 'Ari Juels', '', 'Ari Juels is a Professor at the Jacobs Technion-Cornell Institute at Cornell Tech in NYC. He was previously Chief Scientist of RSA, The Security Division of EMC.', 'juels@cornell.edu') }}
+
+    {{ people_item('http://elaineshi.com', 'elaine2.jpg', 'Elaine Shi', '', 'Elaine Shi is an Associate Professor at Cornell University. 99% of programmers in the real world are not cryptography experts, and it is dangerous for them to cook up their own cryptographic protocols. Elaine\'s research creates platforms and tools that aids non-expert programmers in creating systems that are "secure by design" and "secure by default".', 'runting@gmail.com') }}
+
+    </div>
+
+    {% if DISQUS_SITENAME %}
+    {% include 'disqus.html' %}
+    {% endif %}
+</div>
+{% endblock %}

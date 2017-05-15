@@ -101,13 +101,13 @@ body {
     left: 800px;
 }
 
-.text.container .left.floated.image {
+/*.text.container .left.floated.image {
     margin: 2em 2em 2em -4em;
 }
 
 .text.container .right.floated.image {
     margin: 2em -4em 2em 2em;
-}
+}*/
 
 .ui.footer.segment {
     border: none;
@@ -162,7 +162,6 @@ code, pre {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     font-style: normal;
 }
-
 
 /*inline code*/
 
