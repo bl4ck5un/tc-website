@@ -43,4 +43,4 @@ LINKS = [
     ]
 
 GOOGLE_ANALYTICS='UA-72748416-5'
-DISQUS_SITENAME = 'town-crier'
+# DISQUS_SITENAME = 'town-crier'
