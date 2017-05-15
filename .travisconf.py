@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 AUTHOR = u'TC Team'
 SITENAME = u'Town Crier'
 
-SITEURL = 'http://www.town-crier.org/staging/'
+SITEURL = 'http://www.town-crier.org/'
 THEME = './themes/semantic-ui'
 PATH = 'content'
 TIMEZONE = 'America/New_York'
