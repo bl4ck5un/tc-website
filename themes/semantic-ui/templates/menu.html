@@ -1,7 +1,7 @@
 <div class="ui mobile hidden borderless fixed stackable main menu">
     <div class="ui text container">
         {% if SITEURL %}
-            <a href="{{ SITEURL }}" class="header item">
+        <a href="{{ SITEURL }}" class="header item">
         {% else %}
             <a href="/" class="header item">
         {% endif %}
@@ -11,10 +11,13 @@
             <img class="logo" src="{{ SITEURL }}/theme/images/logo.png">
         {% endif %}
             Home
-        </a>
+        </a> {% for item, url in MENU_LINKS %}
+        <a href="{{ url }}" class="item">{{ item }}</a> {% endfor %}
+    </div>
 
-        {% for item, url in MENU_LINKS %}
-            <a href="{{ url }}" class="item">{{ item }}</a>
-        {% endfor %}
+    <div class="right menu">
+        <div class="item">
+            <a class="github-button" href="https://github.com/bl4ck5un/Town-Crier" data-size="small" aria-label="Star bl4ck5un/Town-Crier on GitHub">Star</a>
+        </div>
     </div>
 </div>

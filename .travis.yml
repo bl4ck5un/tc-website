@@ -18,7 +18,7 @@ deploy:
   default_text_charset: utf-8
   # cache_control: max-age=0
   local-dir: output
-  upload-dir: staging
+  # upload-dir: staging
   detect_encoding: true
   on:
     branch: master
