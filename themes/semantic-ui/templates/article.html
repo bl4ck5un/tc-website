@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ article.title }}{% endblock %}
+{% block title %}TC - {{ article.title }}{% endblock %}
 
 {% block meta_tags %}
 <meta property="og:title" content="{{ article.title }}" />
@@ -23,19 +23,9 @@
     <div class="ui right attached rail tablet or lower hidden" style="min-height: 500px;">
         <div class="ui sticky toc" id="toc"></div>
     </div>
-    <!--<div class="overlay">-->
-        <!--<div class="ui labeled icon vertical menu">-->
-            <!--<a class="item sharer" data-sharer="twitter" data-title="{{ article.title}}" data-url="{{ SITEURL }}/{{ article.url }}"><i class="twitter icon"></i> Tweet</a>-->
-            <!--<a data-sharer="facebook" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="facebook icon"></i> Share</a>-->
-            <!--<a data-sharer="googleplus" data-url="{{ SITEURL}}/{{ article.url }}" class="item sharer"><i class="google plus icon"></i> Share</a>-->
-            <!--<a class="item sharer" data-sharer="email" data-to="" data-title="{{ article.title}}" data-subject="Checkout this article!" data-url="{{ SITEURL }}/{{ article.url }}"><i class="mail icon"></i> E-mail</a>-->
-        <!--</div>-->
-    <!--</div>-->
     <div id="article-content">
         {{ article.content }}
     </div>
-
-
     {% if DISQUS_SITENAME %}
     {% include 'disqus.html' %}
     {% endif %}
