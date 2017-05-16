@@ -1,4 +1,4 @@
-Understand the ``Town Crier`` contract
+Understand the Town Crier contract
 =======================================
 
 The ``TownCrier`` contract provides a uniform interface for queries from and replies to an application contract, which we also refer as a "Requester".
