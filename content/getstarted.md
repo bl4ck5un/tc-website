@@ -26,7 +26,7 @@ This is the function which will be called by the TC Contract to deliver the resp
 ## Option B: Interfacing with TC directly
 
 Interfacing directly with Town Crier requires a little more work, but is also straightforward, and gives access to all of TC's currently supported set of data types.
-To query one of the [supported data sources](dev.html), an application contract just needs to send a query to the `TownCrier` Contract, which lives on the [mainnet](XXX).
+To query one of the [supported data sources](dev.html), an application contract just needs to send a query to the `TownCrier` Contract, which lives on the [mainnet][Mainnet Contract].
 
 A query consists of a _query type_, which specifies the data source to be queried and some _parameters_,
 along with a callback address to which the data feeds will be delivered.
@@ -398,9 +398,10 @@ you can [watch events] `Request()` and `Response()` of the application contract 
 While the above example demonstrates the basic usage of TC, it is of limited
 capability. We've also developed several other full-blown examples to showcase
 the power of TC.
-You can read more [here](XXX).
+You can read more [here][readthedocs].
 
 
+[Mainnet Contract]: https://etherscan.io/address/0x89c1b3807d4c67df034fffb62f3509561218d30b
 [Mist]: https://github.com/ethereum/mist
 [Dev page]: http://www.town-crier.org/staging/dev.html
 [TownCrier.sol]: code/TownCrier.sol
@@ -409,3 +410,4 @@ You can read more [here](XXX).
 [web3.eth.estimateGas]: https://github.com/ethereum/wiki/wiki/JavaScript-API#web3ethestimategas
 [Ethereum greeter tutorial]: https://www.ethereum.org/greeter
 [watch events]: https://github.com/ethereum/wiki/wiki/JavaScript-API#contract-events
+[readthedocs]: https://town-crier.readthedocs.io/en/latest/
