@@ -5,6 +5,7 @@ Category: Review
 
 # Featured Talks
 
+- __Silicon Valley Ethereum Meetup__ by Fan Zhang. [Slides](http://www.fanzhang.me/files/tc/TC-SF-20170814.pptx)
 - __Using Hardware Enclaves to Provide Trusted Data to Smart Contracts__ (Episode 164) by Prof. Ari Juels.
 
 <div class="youtube youtube-16x9">
