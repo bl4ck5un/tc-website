@@ -3,9 +3,12 @@ Date: 2017-4-6
 slug: dev
 toc: yes
 
-# Locate the `TownCrier` Contract
+# `TownCrier` Contract
 
-- Address: [`0x89c1b3807d4c67df034fffb62f3509561218d30b`](https://etherscan.io/address/0x89c1b3807d4c67df034fffb62f3509561218d30b)
+- mainnet: [`0x89c1b3807d4c67df034fffb62f3509561218d30b`](https://etherscan.io/address/0x89c1b3807d4c67df034fffb62f3509561218d30b)
+- Rinkeby[`0x9ec1874ff1def6e178126f7069487c2e9e93d0f9`](https://rinkeby.etherscan.io/address/0x9ec1874ff1def6e178126f7069487c2e9e93d0f9)
+
+Thanks to Microsoft for hosting the TC Server.
 
 # Get the [attestation](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) for Town Crier enclave
 
