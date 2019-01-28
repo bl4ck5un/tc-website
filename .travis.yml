@@ -9,23 +9,19 @@ before_deploy:
 - chmod u+x compress.sh && ./compress.sh
 deploy:
   provider: s3
-  access_key_id: AKIAJJUWMWYDBSKNLCDA
-  secret_access_key:
-    secure: KFxfEjTG9KxrSUFgL8F6EMjmS/HO2SSwDAYRaiHJgc/Eu9RvI5orNv82S9qsEGXy45bMja8SHE1YJX9joU8EUNLyIhdTzroPcm2vGMBKBsotJoDmKEx0gd0VMaQZNSx1Z3OiC99sIM3ir+mh8BkAMVxzHVR84WK3zkoNX+UTAuKa50E5yA2eLgbhPluInG5ekmPgz/ckNMawem8GdllNm0evNlVirBiKkXP5FU3zciTQroeUFAlkC2iOki9mAsbl5ENpYAnNxfV0/vJ9oH9grTvet/QpiXnMKidaHvzaMFTv/3ZJB7uZWjnMYTXyONJl2tarTycIVY7E+Gv4FreBa3ZKLvuc+9V0+vgAq6ksOOAQNDRz60Z3YQptDy8cYNmsBcEv7f5QRejySQB+bYgfEm0rFHlz17zr8TtbqWY0Y4BeB8ohV88iAVoPBf2hgXHrTyT+fsLxv/1mP3plqM0KgHyspndgaGS0tvEiMtAmfXtYu7/QXmbbl9efOHzO8SlrLx9YAU/rDAcj2JUDjBBRKFj93d+n1kH/LOYmpvZW2auWXu5CrIziElBwDwtrxhwepHhUoanaRaiZwILQHygz1hoTKCWgzDZYxzoLrcdT1uTHDorEDqVsaZK4s0QwqnlSqh5xEjVcqXt763Psvl/1N8edSNtZm5bvyMSfHL7r7Zs=
+  access_key_id: $ACCESS_ID
+  secret_access_key: $SECRET_KEY
   bucket: www.town-crier.org
   region: us-east-1
   skip_cleanup: true
   default_text_charset: utf-8
   # cache_control: max-age=0
   local-dir: output
-  # upload-dir: staging
   detect_encoding: true
   on:
     branch: master
 notifications:
   email:
     recipients:
-    - fanz@linux.com
+    - dev@town-crier.org
     on_failure: always
-  slack:
-    secure: NEC1fImfgtpSrP3NDHi7izYUFYGOxX/nd4zR8g8hCu6OhruJpWwDEzgub/wYU10tSGdcMQCNDrOKgkBu4sXNmnVAZRDEKGcXj05jvYgkgexcpGRv/6d8mzD9bnahs+OVTvoS7IyKwjTK4mn/TBFmTrWdkyovMJqW4ppA6AGPxUizyZND/0UyEYF6wawvSRfglwDLnWB/x0dzUdjrNZ2HgZEUme4nXAWWbljaa0mPvwNFTMKFQpfGPhepV4eBz15HBaE/Y3fX5z9nZc+iUEyaOWt2y7w7gJeCLit7Kp6mdzhtdNMA5fnogZPmu/BNvqMz3baipERKD+Vrn/7c1e04AKfQqaRA+tsWAAYamOa+cY1yANjlI+rF0yND0EHbBbD5MyUeTW7Jg53Bw/iDyQ93R3CXpeBr9lqeAgNNZLaBOCwUrWM1LpOqtfwyYEHgV2KcwqfbvriY960I3dgoOvASlQrOekjnA4AVexNRNTjCFFpMK4O1ypI6xdkdE+Q/PQgaUkJZYGe9mDVZe9ChhST1NZu2HmS9ftvkoBDaqAVQqVd5bMuG4Ju8OFSVdWj2vdQLckpYhCgs4kDDNuKgGdjIzy/Q3V5UzALn+c54PHDsGKDi4DharIEcWjyYuy6yMtYmmvZ/CCjNHeND4qsPJdadtic9HCyhf4g0717O4XnyIdc=
