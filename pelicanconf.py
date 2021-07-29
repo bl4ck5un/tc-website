@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 AUTHOR = u'Fan Zhang'
 SITENAME = u'Town Crier'
 
-# SITEURL = 'http://www.town-crier.org/staging/'
+SITEURL = 'http://https://town-crier.netlify.app/'
 
 THEME = './themes/semantic-ui'
 
